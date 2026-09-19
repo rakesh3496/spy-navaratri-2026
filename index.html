@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6b0f1a">
+<meta name="description" content="Sri Pentamamba Youth — Sharan Navaratri Celebration 2026">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SPY">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>SPY — Sri Pentamamba Youth</title>
 <style>
 :root{
@@ -21,7 +28,7 @@
   --green-bg:#123321; --red-bg:#3a1a16;
 }
 *{box-sizing:border-box;}
-body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:env(safe-area-inset-bottom);}
 header{background:linear-gradient(135deg,var(--maroon),var(--maroon-d));color:#fff;padding:18px 16px 22px;text-align:center;position:relative;overflow:hidden;}
 header .day-emoji{font-size:34px;}
 header h1{margin:4px 0 2px;font-size:20px;letter-spacing:.5px;}
@@ -95,33 +102,21 @@ small.muted{color:var(--muted);}
 <div id="loginScreen">
   <div class="card">
     <h2 style="text-align:center;">🪔 SPY Login</h2>
-    <label>Access password</label>
+    <label>User ID</label><input id="loginId" placeholder="e.g. admin9">
+    <label>Password</label>
     <div style="position:relative;">
       <input id="loginPass" type="password" style="padding-right:44px;">
       <button type="button" onclick="togglePass()" style="position:absolute;right:4px;top:4px;margin:0;padding:6px 10px;font-size:12px;background:transparent;color:var(--maroon);" id="pwToggleBtn">👁️</button>
     </div>
-    <button onclick="attemptLogin()" style="width:100%;">Continue</button>
-    <small class="muted" style="display:block;margin-top:8px;">Committee members use the shared committee password. Admin access uses the private admin password.</small>
+    <button onclick="attemptLogin()" style="width:100%;">Login</button>
     <div id="loginError" style="color:var(--red);font-size:12px;margin-top:6px;"></div>
-  </div>
-</div>
-
-
-<div id="usernameSetup" style="display:none;max-width:360px;margin:60px auto;padding:20px;">
-  <div class="card">
-    <h2 style="text-align:center;">Create your user name</h2>
-    <p class="muted" style="font-size:12px;">Use a unique name such as <b>rakesh</b> or <b>anil</b>. This name is attached to collections, expenses and activity.</p>
-    <label>User name</label>
-    <input id="customUserName" placeholder="e.g. rakesh" maxlength="30" autocomplete="off">
-    <button onclick="continueWithUsername()" style="width:100%;">Enter SPY</button>
-    <div id="usernameError" style="color:var(--red);font-size:12px;margin-top:6px;"></div>
   </div>
 </div>
 
 <div id="profileSetup" style="display:none;">
   <div class="card">
     <h2 style="text-align:center;">Set up your profile</h2>
-    <label>Your name</label><input id="pfName" placeholder="Full name">
+    <label>Username</label><input id="pfUsername" placeholder="e.g. rakesh" maxlength="30" autocomplete="username"><small class="muted">3–30 characters: letters, numbers or underscore. Must be unique.</small><label>Your name</label><input id="pfName" placeholder="Full name">
     <label>Profile photo</label><input id="pfPhoto" type="file" accept="image/*">
     <small class="muted" id="pfCurrentNote" style="display:none;">Leave photo blank to keep your current one.</small>
     <button onclick="saveProfile()" style="width:100%;">Continue</button>
@@ -151,10 +146,8 @@ small.muted{color:var(--muted);}
           <div class="hero-title">SPY • SRI PENTAMAMBA YOUTH</div>
           <div class="hero-sub">Sharan Navaratri Utsavam 2026</div>
         </div>
-        <div style="font-size:28px;">🪔</div>
-      </div>
-      <div style="text-align:center;margin:18px 0 4px;font-size:13px;color:var(--gold-l);">
-        Committee Funds Overview
+      </div></div>
+        </div>
       </div>
     </div>
 
@@ -170,11 +163,7 @@ small.muted{color:var(--muted);}
         <div><div class="t-label">Balance</div><div class="t-val" id="trioGap">₹0</div></div>
       </div>
       <div style="text-align:center;margin-top:10px;"><small class="muted" id="miniStats"></small></div>
-    </div>
-
-</div>
-
-    <div class="card">
+    </div><div class="card">
       <div class="pill-row">
         <button class="pill active" id="pillColl" onclick="setEntryView('collections')">Collections (<span id="collCount">0</span>)</button>
         <button class="pill" id="pillExp" onclick="setEntryView('expenses')">Expenses (<span id="expCount">0</span>)</button>
@@ -251,7 +240,7 @@ small.muted{color:var(--muted);}
     <div class="card">
       <h2>Committee Team</h2>
       <div id="teamList"></div>
-      <small class="muted">User names identify individual committee members. Admin access remains separate.</small>
+      <small class="muted">Admin can promote/demote Editor ↔ Viewer.</small>
     </div>
   </div>
 
@@ -267,7 +256,7 @@ small.muted{color:var(--muted);}
 </nav>
 </div>
 
-<script>
+<script type="module">
 const DAY_EMOJIS=['🪔','🌺','🕉️','✨','🙏','🌸','🔱','🎊','👑'];
 function todayEmoji(){
   const d=new Date();
@@ -276,89 +265,99 @@ function todayEmoji(){
 }
 document.getElementById('dayEmoji').textContent=todayEmoji();
 
-const ACCOUNTS = {
-  admin:{pass:'spy@202627', baseRole:'admin'},
-  committee:{pass:'spy@2026', baseRole:'editor'}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBiUz3d_PdcllLXnvGzr2dPkkoMUJL10Is",
+  authDomain: "spy-navaratri-2026.firebaseapp.com",
+  projectId: "spy-navaratri-2026",
+  storageBucket: "spy-navaratri-2026.firebasestorage.app",
+  messagingSenderId: "927829850729",
+  appId: "1:927829850729:web:736bd205592476ab6140f8",
+  measurementId: "G-HXLDKGZMKK"
 };
 
-// Front-end-only identity model for the temporary GitHub Pages version.
-// IMPORTANT: localStorage is browser-local, so usernames are NOT globally unique
-// and data is NOT shared between different devices until a backend is added.
-function load(){
-  try{
-    return JSON.parse(localStorage.getItem('spyData'))||{
-      collections:[],expenses:[],calNotes:{},feedback:[],profiles:{},roles:{},activity:{}
-    };
-  }catch(e){
-    return {collections:[],expenses:[],calNotes:{},feedback:[],profiles:{},roles:{},activity:{}};
-  }
-}
-function save(d){ try{localStorage.setItem('spyData',JSON.stringify(d));}catch(e){} }
-let data=load();
-let currentAccessRole = null;
+const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js");
+const { getAuth, signInAnonymously, onAuthStateChanged } =
+  await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js");
+const {
+  getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, serverTimestamp, runTransaction
+} = await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js");
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+// Temporary committee gate. Change this before sharing if desired.
+const COMMITTEE_PASSWORD = "spy@2026";
+
 let currentUserId = null;
-try{ currentAccessRole = sessionStorage.getItem('spyAccessRole') || null; }catch(e){}
-try{ currentUserId = sessionStorage.getItem('spyUser') || null; }catch(e){}
+let currentUserProfile = null;
+let data = {collections:[],expenses:[],calNotes:{},feedback:[],profiles:{},roles:{},activity:{}};
+let unsubscribers = [];
+let entryView = 'collections';
 
-function roleOf(uid){ return currentAccessRole || 'viewer'; }
-function nameOf(uid){ return uid || 'Unknown'; }
-function photoOf(uid){ return data.profiles[uid]&&data.profiles[uid].photo; }
+function esc(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+function normalizeUsername(v){ return String(v||'').trim().toLowerCase(); }
+function validUsername(v){ return /^[a-z0-9_]{3,30}$/.test(v); }
+function roleOf(uid){ return data.profiles[uid]?.role || 'editor'; }
+function nameOf(uid){ return data.profiles[uid]?.name || uid || 'User'; }
+function photoOf(uid){ return data.profiles[uid]?.photo; }
 function avatarHtml(uid,size){
-  const p=photoOf(uid);
-  const cls=size==='sm'?'avatar-sm':'avatar';
-  return p?`<img class="${cls}" src="${p}">`:`<span class="${cls}">${nameOf(uid)[0]?.toUpperCase()||'?'}</span>`;
+  const p=photoOf(uid), cls=size==='sm'?'avatar-sm':'avatar';
+  return p?`<img class="${cls}" src="${esc(p)}">`:`<span class="${cls}">${esc(nameOf(uid)[0]?.toUpperCase()||'?')}</span>`;
 }
-function bump(uid){ if(!uid)return; data.activity[uid]=(data.activity[uid]||0)+1; }
+function fmt(n){ return '₹'+Number(n||0).toLocaleString('en-IN'); }
+function badgeFor(total){ if(total>=20000)return'💎'; if(total>=10000)return'🥇'; if(total>=5000)return'🥈'; if(total>0)return'🥉'; return''; }
+function setLoginError(msg){ document.getElementById('loginError').textContent=msg; }
 
-function togglePass(){
-  const f=document.getElementById('loginPass');
-  const btn=document.getElementById('pwToggleBtn');
-  if(f.type==='password'){ f.type='text'; btn.textContent='🙈'; }
-  else { f.type='password'; btn.textContent='👁️'; }
+async function ensureAuth(){
+  if(auth.currentUser) return auth.currentUser;
+  return (await signInAnonymously(auth)).user;
+}
+async function getProfile(uid){
+  const s=await getDoc(doc(db,'users',uid));
+  return s.exists()?s.data():null;
+}
+async function saveUser(uid, obj){ await setDoc(doc(db,'users',uid),obj,{merge:true}); }
+
+async function createUniqueUsername(username,uid,name,photo){
+  await runTransaction(db,async tx=>{
+    const uref=doc(db,'usernames',username);
+    const us=await tx.get(uref);
+    if(us.exists() && us.data().uid!==uid) throw new Error('USERNAME_TAKEN');
+    tx.set(uref,{uid,username,updatedAt:serverTimestamp()},{merge:true});
+    tx.set(doc(db,'users',uid),{
+      uid,username,name,photo:photo||null,role:'editor',
+      createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+    },{merge:true});
+  });
 }
 
-function attemptLogin(){
-  const pass=document.getElementById('loginPass').value.trim();
-  let role=null;
-  if(pass===ACCOUNTS.admin.pass) role='admin';
-  else if(pass===ACCOUNTS.committee.pass) role='editor';
-  else{
-    document.getElementById('loginError').textContent='Invalid access password.';
-    return;
+async function attemptLogin(){
+  setLoginError('');
+  if(document.getElementById('loginPass').value.trim()!==COMMITTEE_PASSWORD){
+    setLoginError('Invalid committee password.'); return;
   }
-  currentAccessRole=role;
-  try{ sessionStorage.setItem('spyAccessRole',role); }catch(e){}
-  document.getElementById('loginError').textContent='';
-  document.getElementById('loginScreen').style.display='none';
-
-  const savedUser = localStorage.getItem('spyLastUser');
-  document.getElementById('usernameSetup').style.display='block';
-  if(savedUser) document.getElementById('customUserName').value=savedUser;
-  setTimeout(()=>document.getElementById('customUserName').focus(),50);
+  try{
+    await ensureAuth();
+    currentUserId=auth.currentUser.uid;
+    currentUserProfile=await getProfile(currentUserId);
+    if(!currentUserProfile){
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('profileSetup').style.display='block';
+      document.getElementById('pfUsername').disabled=false;
+      document.getElementById('pfUsername').value='';
+      document.getElementById('pfName').value='';
+    }else enterApp();
+  }catch(e){ console.error(e); setLoginError('Unable to connect to Firebase.'); }
 }
 
-function continueWithUsername(){
-  const raw=document.getElementById('customUserName').value.trim();
-  const uid=raw.toLowerCase().replace(/\\s+/g,'_');
-  const err=document.getElementById('usernameError');
-  if(!/^[a-z0-9_]{3,30}$/.test(uid)){
-    err.textContent='Use 3–30 characters: letters, numbers or underscore.';
-    return;
-  }
-  currentUserId=uid;
-  localStorage.setItem('spyLastUser',uid);
-  try{ sessionStorage.setItem('spyUser',uid); }catch(e){}
-  if(!data.profiles[uid]){
-    document.getElementById('usernameSetup').style.display='none';
-    document.getElementById('profileSetup').style.display='block';
-    document.getElementById('pfName').value=uid.replace(/_/g,' ');
-  }else{
-    enterApp();
-  }
-}
-
+let editingProfile=false;
 function openProfileEditor(){
   editingProfile=true;
+  document.getElementById('pfUsername').value=currentUserProfile?.username||'';
+  document.getElementById('pfUsername').disabled=true;
   document.getElementById('pfName').value=nameOf(currentUserId);
   document.getElementById('pfPhoto').value='';
   document.getElementById('pfCurrentNote').style.display='block';
@@ -368,262 +367,197 @@ function openProfileEditor(){
 }
 function cancelProfileEdit(){
   editingProfile=false;
+  document.getElementById('pfUsername').disabled=false;
   document.getElementById('profileSetup').style.display='none';
   document.getElementById('appContainer').style.display='block';
 }
-
-function saveProfile(){
+async function saveProfile(){
   const name=document.getElementById('pfName').value.trim();
-  if(!name){ alert('Enter your name'); return; }
+  const username=normalizeUsername(document.getElementById('pfUsername').value);
+  if(!name){alert('Enter your name');return;}
+  if(!validUsername(username)){alert('Username must be 3–30 characters using letters, numbers or underscore.');return;}
   const file=document.getElementById('pfPhoto').files[0];
-  const existingPhoto = data.profiles[currentUserId] ? data.profiles[currentUserId].photo : null;
-  const finish=(photoUrl)=>{
-    data.profiles[currentUserId]={name, photo:photoUrl!==undefined?photoUrl:existingPhoto};
-    save(data);
-    document.getElementById('profileSetup').style.display='none';
-    document.getElementById('pfCurrentNote').style.display='none';
-    document.getElementById('pfCancelBtn').style.display='none';
-    editingProfile=false;
-    enterApp();
+  const oldPhoto=currentUserProfile?.photo||null;
+  const finish=async(photo)=>{
+    try{
+      if(editingProfile) await saveUser(currentUserId,{name,photo:photo??oldPhoto,updatedAt:serverTimestamp()});
+      else await createUniqueUsername(username,currentUserId,name,photo||null);
+      currentUserProfile=await getProfile(currentUserId);
+      document.getElementById('profileSetup').style.display='none';
+      document.getElementById('pfCurrentNote').style.display='none';
+      document.getElementById('pfCancelBtn').style.display='none';
+      document.getElementById('pfUsername').disabled=false;
+      editingProfile=false;
+      enterApp();
+    }catch(e){
+      if(e.message==='USERNAME_TAKEN') alert('That username already exists. Please choose another.');
+      else {console.error(e);alert('Could not save profile.');}
+    }
   };
-  if(file){ const r=new FileReader(); r.onload=()=>finish(r.result); r.readAsDataURL(file); }
-  else finish(existingPhoto);
+  if(file){const r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(file);} else finish(oldPhoto);
 }
-
-function logout(){ try{ sessionStorage.removeItem('spyUser'); sessionStorage.removeItem('spyAccessRole'); }catch(e){} currentUserId=null; currentAccessRole=null; location.reload(); }
+function logout(){unsubscribers.forEach(u=>{try{u()}catch(e){}});location.reload();}
 
 function enterApp(){
+  if(!currentUserProfile)return;
   document.getElementById('appContainer').style.display='block';
   const role=roleOf(currentUserId);
-  document.getElementById('whoAmI').innerHTML = `${avatarHtml(currentUserId,'sm')} ${nameOf(currentUserId)} <span class="role-pill">${role}</span>`;
-  applyRolePermissions(role);
-  buildCalendar();
-  render();
+  document.getElementById('whoAmI').innerHTML=`${avatarHtml(currentUserId,'sm')} ${esc(nameOf(currentUserId))} <span class="role-pill">${esc(role)}</span>`;
+  applyRolePermissions(role); buildCalendar(); startRealtime(); render();
 }
-
 function applyRolePermissions(role){
-  const canEdit = role==='admin' || role==='editor';
-  document.querySelectorAll('#tab-collect .card:first-child, #tab-expense .card:first-child').forEach(el=>{ el.style.display = canEdit?'block':'none'; });
-  if(role==='admin') document.getElementById('teamNavBtn').style.display='block';
+  const canEdit=role==='admin'||role==='editor';
+  document.querySelectorAll('#tab-collect .card:first-child,#tab-expense .card:first-child').forEach(el=>el.style.display=canEdit?'block':'none');
+  if(role==='admin')document.getElementById('teamNavBtn').style.display='block';
 }
 
-(function init(){
-  if(currentUserId && currentAccessRole && data.profiles[currentUserId]){
-    document.getElementById('loginScreen').style.display='none';
-    enterApp();
-  }
-})();
-
-function renderTeam(){
-  const list=document.getElementById('teamList');
-  if(!list) return;
-  const users=Object.keys(data.activity);
-  if(currentUserId && !users.includes(currentUserId)) users.push(currentUserId);
-  list.innerHTML = users.length ? users.sort().map(uid=>{
-    const edits=data.activity[uid]||0;
-    const badge = edits>=30?'💎':edits>=15?'🥇':edits>=5?'🥈':edits>0?'🥉':'';
-    const role = uid===currentUserId ? roleOf(currentUserId) : 'editor';
-    return `<div class="item"><span>${avatarHtml(uid,'sm')} ${nameOf(uid)} ${badge}</span><span class="role-pill">${role}</span></div>`;
-  }).join('') : '<small class="muted">No committee users recorded in this browser yet.</small>';
+function startRealtime(){
+  unsubscribers.forEach(u=>{try{u()}catch(e){}}); unsubscribers=[];
+  const bind=(path,key,mapper)=>{
+    const q=query(collection(db,path),orderBy('createdAt','asc'));
+    const u=onSnapshot(q,s=>{data[key]=s.docs.map(d=>mapper(d.id,d.data()));render();},e=>console.error(path,e));
+    unsubscribers.push(u);
+  };
+  bind('collections','collections',(id,x)=>({id,...x}));
+  bind('expenses','expenses',(id,x)=>({id,...x}));
+  bind('feedback','feedback',(id,x)=>({id,...x}));
+  bind('calendarNotes','calNotes',(id,x)=>({id,...x}));
+  unsubscribers.push(onSnapshot(collection(db,'users'),s=>{
+    data.profiles={}; data.roles={};
+    s.docs.forEach(d=>{data.profiles[d.id]=d.data();data.roles[d.id]=d.data().role||'editor';});
+    render(); renderTeam();
+  },e=>console.error('users',e)));
 }
 
-function changeRole(uid,newRole){ data.roles[uid]=newRole; save(data); renderTeam(); }
+function stamp(o){return {...o,by:currentUserId,createdAt:serverTimestamp()};}
 
-let entryView='collections';
 function setEntryView(view){
   entryView=view;
   document.getElementById('pillColl').classList.toggle('active',view==='collections');
   document.getElementById('pillExp').classList.toggle('active',view==='expenses');
   const sel=document.getElementById('entryFilter');
-  sel.innerHTML = view==='collections'
-    ? '<option value="all">All Entries</option><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option>'
-    : '<option value="all">All Entries</option><option value="full">Fully Paid</option><option value="advance">Advance Paid</option>';
+  sel.innerHTML=view==='collections'
+    ?'<option value="all">All Entries</option><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option>'
+    :'<option value="all">All Entries</option><option value="full">Fully Paid</option><option value="advance">Advance Paid</option>';
   renderEntryList();
 }
 function renderEntryList(){
-  const filter=document.getElementById('entryFilter').value;
-  const list=document.getElementById('entryListUnified');
+  const filter=document.getElementById('entryFilter').value,list=document.getElementById('entryListUnified');
   if(entryView==='collections'){
-    let items=data.collections.slice();
-    if(filter!=='all') items=items.filter(c=>c.mode===filter);
-    list.innerHTML = items.slice().reverse().map(c=>`<div class="item entry-row"><span class="entry-icon">🧑</span><span style="flex:1;">${c.name}<br><small class="muted">${c.mode} • ${new Date(c.date).toLocaleDateString('en-IN',{month:'short',day:'numeric'})}</small></span><span class="entry-amt-pos">+${fmt(c.amount)}</span></div>`).join('') || '<small class="muted">No entries.</small>';
-  } else {
-    let items=data.expenses.slice();
-    if(filter!=='all') items=items.filter(e=>e.status===filter);
-    list.innerHTML = items.slice().reverse().map(e=>`<div class="item entry-row"><span class="entry-icon" style="background:var(--red-bg);">🧾</span><span style="flex:1;">${e.name}<br><small class="muted">${e.status==='advance'?'Advance':'Fully Paid'} • ${new Date(e.date).toLocaleDateString('en-IN',{month:'short',day:'numeric'})}</small></span><span class="entry-amt-neg">-${fmt(e.amount)}</span></div>`).join('') || '<small class="muted">No entries.</small>';
+    let a=data.collections.slice();if(filter!=='all')a=a.filter(c=>c.mode===filter);
+    list.innerHTML=a.reverse().map(c=>`<div class="item entry-row"><span class="entry-icon">🧑</span><span style="flex:1;">${esc(c.name)}<br><small class="muted">${esc(c.mode)}</small></span><span class="entry-amt-pos">+${fmt(c.amount)}</span></div>`).join('')||'<small class="muted">No entries.</small>';
+  }else{
+    let a=data.expenses.slice();if(filter!=='all')a=a.filter(e=>e.status===filter);
+    list.innerHTML=a.reverse().map(e=>`<div class="item entry-row"><span class="entry-icon" style="background:var(--red-bg);">🧾</span><span style="flex:1;">${esc(e.name)}<br><small class="muted">${e.status==='advance'?'Advance':'Fully Paid'}</small></span><span class="entry-amt-neg">-${fmt(e.amount)}</span></div>`).join('')||'<small class="muted">No entries.</small>';
   }
 }
-
 function showTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if(name==='team') renderTeam();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  if(name==='team')renderTeam();
 }
+function switchToTab(name){const order=['dashboard','collect','expense','calendar','feedback','team'];showTab(name,document.querySelectorAll('nav button')[order.indexOf(name)]);}
 
-function fmt(n){ return '₹'+Number(n||0).toLocaleString('en-IN'); }
-
-function badgeFor(total){
-  if(total>=20000) return '💎';
-  if(total>=10000) return '🥇';
-  if(total>=5000) return '🥈';
-  if(total>0) return '🥉';
-  return '';
+async function deleteCollection(id){if(confirm('Delete this collection entry?'))await deleteDoc(doc(db,'collections',id));}
+async function editCollection(id){
+  const c=data.collections.find(x=>x.id===id);if(!c)return;
+  document.getElementById('cName').value=c.name;document.getElementById('cContact').value=c.contact||'';
+  document.getElementById('cAmount').value=c.amount;document.getElementById('cMode').value=c.mode;
+  await deleteDoc(doc(db,'collections',id));switchToTab('collect');
 }
-
-function switchToTab(name){
-  const order=['dashboard','collect','expense','calendar','feedback','team'];
-  const btn=document.querySelectorAll('nav button')[order.indexOf(name)];
-  showTab(name,btn);
+async function deleteExpense(id){if(confirm('Delete this expense entry?'))await deleteDoc(doc(db,'expenses',id));}
+async function editExpense(id){
+  const e=data.expenses.find(x=>x.id===id);if(!e)return;
+  document.getElementById('eName').value=e.name;document.getElementById('eDesc').value=e.desc||'';
+  document.getElementById('eAmount').value=e.amount;document.getElementById('eStatus').value=e.status;toggleAdvance();
+  document.getElementById('ePaid').value=e.paid;await deleteDoc(doc(db,'expenses',id));switchToTab('expense');
 }
+function toggleAdvance(){document.getElementById('advanceField').style.display=document.getElementById('eStatus').value==='advance'?'block':'none';}
 
-function deleteCollection(i){ if(confirm('Delete this collection entry?')){ data.collections.splice(i,1); bump(currentUserId); save(data); render(); } }
-function editCollection(i){
-  const c=data.collections[i];
-  document.getElementById('cName').value=c.name;
-  document.getElementById('cContact').value=c.contact||'';
-  document.getElementById('cAmount').value=c.amount;
-  document.getElementById('cMode').value=c.mode;
-  data.collections.splice(i,1); bump(currentUserId); save(data);
-  switchToTab('collect'); render();
-}
-
-function deleteExpense(i){ if(confirm('Delete this expense entry?')){ data.expenses.splice(i,1); bump(currentUserId); save(data); render(); } }
-function editExpense(i){
-  const e=data.expenses[i];
-  document.getElementById('eName').value=e.name;
-  document.getElementById('eDesc').value=e.desc||'';
-  document.getElementById('eAmount').value=e.amount;
-  document.getElementById('eStatus').value=e.status;
-  toggleAdvance();
-  document.getElementById('ePaid').value=e.paid;
-  data.expenses.splice(i,1); bump(currentUserId); save(data);
-  switchToTab('expense'); render();
-}
-
-function toggleAdvance(){
-  document.getElementById('advanceField').style.display = document.getElementById('eStatus').value==='advance' ? 'block':'none';
-}
-
-function addCollection(){
-  const name=document.getElementById('cName').value.trim();
-  const amount=parseFloat(document.getElementById('cAmount').value);
+async function addCollection(){
+  const name=document.getElementById('cName').value.trim(),amount=parseFloat(document.getElementById('cAmount').value);
   if(!name||!amount){alert('Enter name and amount');return;}
-  data.collections.push({name,contact:document.getElementById('cContact').value,amount,mode:document.getElementById('cMode').value,date:new Date().toISOString(),by:currentUserId});
-  bump(currentUserId);
-  save(data);
+  await addDoc(collection(db,'collections'),stamp({name,contact:document.getElementById('cContact').value,amount,mode:document.getElementById('cMode').value}));
   document.getElementById('cName').value='';document.getElementById('cContact').value='';document.getElementById('cAmount').value='';
-  render();
 }
-
-function addExpense(){
-  const name=document.getElementById('eName').value.trim();
-  const amount=parseFloat(document.getElementById('eAmount').value);
+async function addExpense(){
+  const name=document.getElementById('eName').value.trim(),amount=parseFloat(document.getElementById('eAmount').value);
   if(!name||!amount){alert('Enter name and amount');return;}
-  const status=document.getElementById('eStatus').value;
-  const paid = status==='advance' ? (parseFloat(document.getElementById('ePaid').value)||0) : amount;
-  data.expenses.push({name,desc:document.getElementById('eDesc').value,amount,status,paid,date:new Date().toISOString(),by:currentUserId});
-  bump(currentUserId);
-  save(data);
+  const status=document.getElementById('eStatus').value,paid=status==='advance'?(parseFloat(document.getElementById('ePaid').value)||0):amount;
+  await addDoc(collection(db,'expenses'),stamp({name,desc:document.getElementById('eDesc').value,amount,status,paid}));
   document.getElementById('eName').value='';document.getElementById('eDesc').value='';document.getElementById('eAmount').value='';document.getElementById('ePaid').value='';
-  render();
 }
-
-function addFeedback(){
-  const name=document.getElementById('fName').value.trim();
-  const desc=document.getElementById('fDesc').value.trim();
+async function addFeedback(){
+  const name=document.getElementById('fName').value.trim(),desc=document.getElementById('fDesc').value.trim();
   if(!name||!desc){alert('Enter name and feedback');return;}
-  data.feedback.unshift({name,category:document.getElementById('fCategory').value,desc,date:new Date().toISOString(),by:currentUserId});
-  save(data);
-  document.getElementById('fName').value='';document.getElementById('fDesc').value='';
-  render();
-  alert('Feedback submitted — committee notified.');
+  await addDoc(collection(db,'feedback'),stamp({name,category:document.getElementById('fCategory').value,desc}));
+  document.getElementById('fName').value='';document.getElementById('fDesc').value='';alert('Feedback submitted.');
 }
-
-function saveCalNote(){
-  const day=document.getElementById('calDaySel').value;
-  const note=document.getElementById('calNote').value.trim();
-  if(!note) return;
-  data.calNotes[day]=note;
-  save(data);
-  document.getElementById('calNote').value='';
-  render();
+async function saveCalNote(){
+  const day=document.getElementById('calDaySel').value,note=document.getElementById('calNote').value.trim();if(!note)return;
+  await setDoc(doc(db,'calendarNotes',String(day)),stamp({day,note}),{merge:true});document.getElementById('calNote').value='';
 }
-
 function buildCalendar(){
-  const grid=document.getElementById('calGrid');
-  const sel=document.getElementById('calDaySel');
-  grid.innerHTML='';sel.innerHTML='';
+  const grid=document.getElementById('calGrid'),sel=document.getElementById('calDaySel');grid.innerHTML='';sel.innerHTML='';
   ['S','M','T','W','T','F','S'].forEach(d=>{const c=document.createElement('div');c.textContent=d;c.style.fontWeight='700';c.style.fontSize='11px';grid.appendChild(c);});
-  const firstDow=new Date(2026,9,1).getDay();
-  for(let i=0;i<firstDow;i++){grid.appendChild(document.createElement('div'));}
-  for(let day=1;day<=31;day++){
-    const c=document.createElement('div');c.className='cal-day';c.textContent=day;
-    if(day>=10&&day<=21){c.classList.add('fest');
-      const opt=document.createElement('option');opt.value=day;opt.textContent='Oct '+day;sel.appendChild(opt);
-    }
-    grid.appendChild(c);
-  }
+  const firstDow=new Date(2026,9,1).getDay();for(let i=0;i<firstDow;i++)grid.appendChild(document.createElement('div'));
+  for(let day=1;day<=31;day++){const c=document.createElement('div');c.className='cal-day';c.textContent=day;
+    if(day>=10&&day<=21){c.classList.add('fest');const o=document.createElement('option');o.value=day;o.textContent='Oct '+day;sel.appendChild(o);}grid.appendChild(c);}
 }
+function renderTeam(){
+  const list=document.getElementById('teamList');if(!list)return;
+  const isAdmin=roleOf(currentUserId)==='admin';
+  list.innerHTML=Object.entries(data.profiles).map(([uid,p])=>{
+    const role=p.role||'editor';
+    const ctl=isAdmin&&uid!==currentUserId
+      ?`<select onchange="changeRole('${uid}',this.value)" style="width:auto;font-size:12px;padding:3px 6px;"><option value="editor" ${role==='editor'?'selected':''}>Editor</option><option value="viewer" ${role==='viewer'?'selected':''}>Viewer</option></select>`
+      :`<span class="role-pill">${esc(role)}</span>`;
+    return `<div class="item"><span>${avatarHtml(uid,'sm')} ${esc(p.name||p.username)} <small class="muted">@${esc(p.username||'')}</small></span>${ctl}</div>`;
+  }).join('')||'<small class="muted">No members yet.</small>';
+}
+async function changeRole(uid,newRole){if(roleOf(currentUserId)==='admin')await updateDoc(doc(db,'users',uid),{role:newRole,updatedAt:serverTimestamp()});}
 
 function render(){
-  const totalCollected=data.collections.reduce((s,c)=>s+c.amount,0);
-  const totalSpent=data.expenses.reduce((s,e)=>s+e.paid,0);
-  const totalOwed=data.expenses.reduce((s,e)=>s+(e.amount-e.paid),0);
+  const totalCollected=data.collections.reduce((s,c)=>s+Number(c.amount||0),0);
+  const totalSpent=data.expenses.reduce((s,e)=>s+Number(e.paid||0),0);
+  const totalOwed=data.expenses.reduce((s,e)=>s+Math.max(Number(e.amount||0)-Number(e.paid||0),0),0);
   const funds=totalCollected-totalSpent;
-
-  document.getElementById('fundsAmt').textContent=fmt(funds);
-  document.getElementById('shortAmt').textContent=fmt(Math.max(totalOwed,0));
-
-  const committedSpend=data.expenses.reduce((s,e)=>s+e.amount,0);
-  const balance=totalCollected-totalSpent;
-  document.getElementById('trioCollected').textContent=fmt(totalCollected);
-  document.getElementById('trioSpend').textContent=fmt(committedSpend);
-  document.getElementById('trioGap').textContent=fmt(balance);
-
-  const numContributors=new Set(data.collections.map(c=>c.name)).size;
-  const avgContribution=numContributors? (totalCollected/numContributors) : 0;
-  const now=new Date();
-  let daysLine='Navaratri: Oct 10–21, 2026';
-  const start=new Date(2026,9,10), end=new Date(2026,9,21);
-  if(now<start){ daysLine=Math.ceil((start-now)/86400000)+' days to go'; }
-  else if(now<=end){ daysLine='Day '+(Math.floor((now-start)/86400000)+1)+' of 9'; }
-  else { daysLine='Navaratri concluded'; }
-  document.getElementById('miniStats').textContent = `${numContributors} contributors • Avg ${fmt(Math.round(avgContribution))} • 🗓️ ${daysLine}`;
-
-  document.getElementById('collCount').textContent=data.collections.length;
-  document.getElementById('expCount').textContent=data.expenses.length;
-  if(!document.getElementById('entryFilter').options.length) setEntryView('collections'); else renderEntryList();
-
-  const pending=data.expenses.filter(e=>e.amount-e.paid>0);
-  document.getElementById('pendingPayments').innerHTML = pending.length ? pending.map(e=>`<div class="item"><span>${e.name}</span><span class="amt" style="color:var(--red);">${fmt(e.amount-e.paid)}</span></div>`).join('') : '<small class="muted">Nothing pending.</small>';
-
-  const byPerson={};
-  data.collections.forEach(c=>{byPerson[c.name]=(byPerson[c.name]||0)+c.amount;});
-  const top=Object.entries(byPerson).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('topContributors').innerHTML = top.length ? top.map(([n,a])=>`<div class="item"><span>${n} <span class="badge">${badgeFor(a)}</span></span><span class="amt">${fmt(a)}</span></div>`).join('') : '<small class="muted">No collections yet.</small>';
-
-  const canEdit = roleOf(currentUserId)==='admin' || roleOf(currentUserId)==='editor';
-  document.getElementById('collectionList').innerHTML = data.collections.map((c,i)=>({c,i})).reverse().map(({c,i})=>{
-    const stamp = c.by ? `<br><small class="muted">by ${nameOf(c.by)}, ${new Date(c.date).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</small>` : '';
-    const btns = canEdit ? `<button class="secondary" style="padding:3px 7px;margin:0 0 0 6px;font-size:12px;" onclick="editCollection(${i})">✏️</button><button class="secondary" style="padding:3px 7px;margin:0;font-size:12px;" onclick="deleteCollection(${i})">🗑️</button>` : '';
-    return `<div class="item"><span>${c.name} <small class="muted">(${c.mode})</small>${stamp}</span><span><span class="amt">${fmt(c.amount)}</span>${btns}</span></div>`;
-  }).join('') || '<small class="muted">No entries yet.</small>';
-
-  document.getElementById('expenseList').innerHTML = data.expenses.map((e,i)=>({e,i})).reverse().map(({e,i})=>{
-    const bal=e.amount-e.paid;
-    const balHtml = bal>0 ? `<br><small style="color:var(--red);font-weight:700;">Balance due: ${fmt(bal)}</small>` : `<br><small style="color:var(--green);">Fully settled</small>`;
-    const stamp = e.by ? `<br><small class="muted">by ${nameOf(e.by)}, ${new Date(e.date).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</small>` : '';
-    const btns = canEdit ? `<br><button class="secondary" style="padding:3px 7px;margin-top:4px;font-size:12px;" onclick="editExpense(${i})">✏️</button><button class="secondary" style="padding:3px 7px;margin:4px 0 0 4px;font-size:12px;" onclick="deleteExpense(${i})">🗑️</button>` : '';
-    return `<div class="item"><span>${e.name}${balHtml}${stamp}</span><span style="text-align:right;">${fmt(e.amount)}<br><small class="muted">paid ${fmt(e.paid)}</small>${btns}</span></div>`;
-  }).join('') || '<small class="muted">No entries yet.</small>';
-
-  document.getElementById('feedbackList').innerHTML = data.feedback.map(f=>`<div class="item"><span>${f.name} <small class="muted">(${f.category})</small><br><small>${f.desc}</small>${f.by?`<br><small class="muted">by ${f.by}</small>`:''}</span></div>`).join('') || '<small class="muted">No feedback yet.</small>';
-
-  const notesHtml=Object.entries(data.calNotes).map(([d,n])=>`<div class="item"><span>Oct ${d}</span><span>${n}</span></div>`).join('');
-  document.getElementById('calNotesList').innerHTML = notesHtml || '<small class="muted">No day notes yet.</small>';
+  document.getElementById('fundsAmt').textContent=fmt(funds);document.getElementById('shortAmt').textContent=fmt(totalOwed);
+  const committedSpend=data.expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  document.getElementById('trioCollected').textContent=fmt(totalCollected);document.getElementById('trioSpend').textContent=fmt(committedSpend);document.getElementById('trioGap').textContent=fmt(funds);
+  const n=new Set(data.collections.map(c=>c.name)).size,avg=n?totalCollected/n:0,now=new Date(),start=new Date(2026,9,10),end=new Date(2026,9,21);
+  let days='Navaratri: Oct 10–21, 2026';if(now<start)days=Math.ceil((start-now)/86400000)+' days to go';else if(now<=end)days='Day '+(Math.floor((now-start)/86400000)+1)+' of 12';else days='Navaratri concluded';
+  document.getElementById('miniStats').textContent=`${n} contributors • Avg ${fmt(Math.round(avg))} • 🗓️ ${days}`;
+  document.getElementById('collCount').textContent=data.collections.length;document.getElementById('expCount').textContent=data.expenses.length;
+  if(!document.getElementById('entryFilter').options.length)setEntryView('collections');else renderEntryList();
+  const pending=data.expenses.filter(e=>Number(e.amount)-Number(e.paid)>0);
+  document.getElementById('pendingPayments').innerHTML=pending.length?pending.map(e=>`<div class="item"><span>${esc(e.name)}</span><span class="amt" style="color:var(--red);">${fmt(e.amount-e.paid)}</span></div>`).join(''):'<small class="muted">Nothing pending.</small>';
+  const by={};data.collections.forEach(c=>by[c.name]=(by[c.name]||0)+Number(c.amount||0));const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('topContributors').innerHTML=top.length?top.map(([n,a])=>`<div class="item"><span>${esc(n)} <span class="badge">${badgeFor(a)}</span></span><span class="amt">${fmt(a)}</span></div>`).join(''):'<small class="muted">No collections yet.</small>';
+  const canEdit=roleOf(currentUserId)==='admin'||roleOf(currentUserId)==='editor';
+  document.getElementById('collectionList').innerHTML=data.collections.slice().reverse().map(c=>{
+    const btns=canEdit?`<button class="secondary" style="padding:3px 7px;margin:0 0 0 6px;font-size:12px;" onclick="editCollection('${c.id}')">✏️</button><button class="secondary" style="padding:3px 7px;margin:0;font-size:12px;" onclick="deleteCollection('${c.id}')">🗑️</button>`:'';
+    return `<div class="item"><span>${esc(c.name)} <small class="muted">(${esc(c.mode)})</small><br><small class="muted">by @${esc(data.profiles[c.by]?.username||'unknown')}</small></span><span><span class="amt">${fmt(c.amount)}</span>${btns}</span></div>`;
+  }).join('')||'<small class="muted">No entries yet.</small>';
+  document.getElementById('expenseList').innerHTML=data.expenses.slice().reverse().map(e=>{
+    const bal=Number(e.amount)-Number(e.paid),balHtml=bal>0?`<br><small style="color:var(--red);font-weight:700;">Balance due: ${fmt(bal)}</small>`:`<br><small style="color:var(--green);">Fully settled</small>`;
+    const btns=canEdit?`<br><button class="secondary" style="padding:3px 7px;margin-top:4px;font-size:12px;" onclick="editExpense('${e.id}')">✏️</button><button class="secondary" style="padding:3px 7px;margin:4px 0 0 4px;font-size:12px;" onclick="deleteExpense('${e.id}')">🗑️</button>`:'';
+    return `<div class="item"><span>${esc(e.name)}${balHtml}<br><small class="muted">by @${esc(data.profiles[e.by]?.username||'unknown')}</small></span><span style="text-align:right;">${fmt(e.amount)}<br><small class="muted">paid ${fmt(e.paid)}</small>${btns}</span></div>`;
+  }).join('')||'<small class="muted">No entries yet.</small>';
+  document.getElementById('feedbackList').innerHTML=data.feedback.slice().reverse().map(f=>`<div class="item"><span>${esc(f.name)} <small class="muted">(${esc(f.category)})</small><br><small>${esc(f.desc)}</small><br><small class="muted">by @${esc(data.profiles[f.by]?.username||'unknown')}</small></span></div>`).join('')||'<small class="muted">No feedback yet.</small>';
+  document.getElementById('calNotesList').innerHTML=Object.entries(data.calNotes).sort((a,b)=>Number(a[0])-Number(b[0])).map(([d,n])=>`<div class="item"><span>Oct ${esc(d)}</span><span>${esc(n.note||'')}</span></div>`).join('')||'<small class="muted">No day notes yet.</small>';
 }
+
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+onAuthStateChanged(auth,async user=>{
+  if(user){
+    currentUserId=user.uid;
+    currentUserProfile=await getProfile(user.uid);
+    if(currentUserProfile) enterApp();
+  }
+});
+ensureAuth().catch(e=>console.error(e));
 
 </script>
 </body>
