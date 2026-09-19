@@ -178,18 +178,55 @@ window.continueWithUsername=async()=>{const u=$('customUserName').value.trim().t
 window.saveProfile=async()=>{const n=$('pfName').value.trim();if(!n){alert('Enter your name');return}let photo='';const file=$('pfPhoto').files[0];if(file){photo=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file)})}const profile={name:n,username:currentUsername,photo};await setDoc(doc(db,'users',currentUserId),profile,{merge:true});data.profiles[currentUserId]=profile;$('profileSetup').style.display='none';enterApp()};
 window.openProfileEditor=()=>{ $('pfName').value=nameOf(currentUserId); $('pfPhoto').value=''; $('appContainer').style.display='none'; $('profileSetup').style.display='block';};
 window.logout=()=>{sessionStorage.clear();location.reload()};
-function enterApp(){ $('appContainer').style.display='block';$('whoAmI').innerHTML=`${avatarHtml(currentUserId)} ${esc(nameOf(currentUserId))} <span class="role-pill">${roleOf()}</span>`;if(roleOf()==='admin'){ $('teamNavBtn').style.display='block'; $('adminNavBtn').style.display='block'; } buildCalendar();render();}
+function enterApp(){ $('appContainer').style.display='block'; syncNotifications(); $('whoAmI').innerHTML=`${avatarHtml(currentUserId)} ${esc(nameOf(currentUserId))} <span class="role-pill">${roleOf()}</span>`;if(roleOf()==='admin'){ $('teamNavBtn').style.display='block'; $('adminNavBtn').style.display='block'; } buildCalendar();render();}
 window.showTab=(name,btn)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));$('tab-'+name).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(name==='team')renderTeam();if(name==='admin')renderAdmin()};
 window.switchToTab=name=>{const names=['dashboard','collect','expense','calendar','feedback','team','admin'];const i=names.indexOf(name);showTab(name,document.querySelectorAll('nav button')[i])};
 function syncCollection(name,arr,transform){onSnapshot(query(collection(db,name)),snap=>{data[arr]=snap.docs.map(d=>({id:d.id,...d.data()}));render()})}
 function syncUsers(){onSnapshot(collection(db,'users'),snap=>{snap.forEach(d=>data.profiles[d.id]=d.data());renderTeam();render()})}
 function syncNotes(){onSnapshot(collection(db,'calendarNotes'),snap=>{data.calNotes={};snap.forEach(d=>data.calNotes[d.id]=d.data().note||'');render()})}
 function syncFeedback(){onSnapshot(query(collection(db,'feedback')),snap=>{data.feedback=snap.docs.map(d=>({id:d.id,...d.data()}));render()})}
-async function startSync(){syncCollection('collections','collections');syncCollection('expenses','expenses');syncUsers();syncNotes();syncFeedback();syncNotifications()}
+async function startSync(){if(!auth.currentUser)return;syncCollection('collections','collections');syncCollection('expenses','expenses');syncUsers();syncNotes();syncFeedback();syncNotifications()}
 function showNotificationToast(title,message){const el=$('toastNotification');if(!el)return;el.innerHTML=`<b>🔔 ${esc(title||'Notification')}</b><br><span>${esc(message||'')}</span>`;el.classList.add('show');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove('show'),4500)}
-let notificationsInitialized=false, notificationIds=new Set();
-async function addNotification(type,title,message){try{const ref=await addDoc(collection(db,'notifications'),{type,title,message,date:new Date().toISOString(),byUsername:currentUsername||'system',createdAt:serverTimestamp()});showNotificationToast(title,message);return ref.id}catch(e){console.error('Notification save failed:',e);showNotificationToast('Notification error','Could not save this notification to Firebase. Check Firestore rules and internet connection.');return null}}
-function syncNotifications(){onSnapshot(collection(db,'notifications'),snap=>{const incoming=snap.docs.map(d=>({id:d.id,...d.data()}));const sorted=incoming.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));if(notificationsInitialized){const newest=incoming.filter(n=>!notificationIds.has(n.id)).sort((a,b)=>new Date(a.date||0)-new Date(b.date||0));if(newest.length){const n=newest[newest.length-1];if(n.byUsername!==currentUsername)showNotificationToast(n.title,n.message)}}notificationIds=new Set(incoming.map(n=>n.id));notificationsInitialized=true;data.notifications=sorted.slice(0,50);renderNotifications()},err=>{console.error('Notification listener failed:',err);showNotificationToast('Notifications unavailable','Firebase notifications could not be read. Check Firestore rules.')})}
+let notificationsInitialized=false, notificationIds=new Set(), notificationUnsubscribe=null, notificationRetryTimer=null;
+async function addNotification(type,title,message){
+  if(!auth.currentUser){console.warn('Notification save skipped: Firebase auth is not ready');return null}
+  try{
+    const ref=await addDoc(collection(db,'notifications'),{type,title,message,date:new Date().toISOString(),byUsername:currentUsername||'system',createdAt:serverTimestamp()});
+    showNotificationToast(title,message);return ref.id;
+  }catch(e){
+    console.error('Notification save failed:',e);
+    showNotificationToast('Notification error',`Could not save notification (${e.code||'Firebase error'}).`);
+    return null;
+  }
+}
+function syncNotifications(){
+  if(notificationUnsubscribe) notificationUnsubscribe();
+  if(notificationRetryTimer){clearTimeout(notificationRetryTimer);notificationRetryTimer=null}
+  if(!auth.currentUser){
+    notificationRetryTimer=setTimeout(syncNotifications,1500);return;
+  }
+  try{
+    notificationUnsubscribe=onSnapshot(collection(db,'notifications'),snap=>{
+      const incoming=snap.docs.map(d=>({id:d.id,...d.data()}));
+      const sorted=incoming.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+      if(notificationsInitialized){
+        const newest=incoming.filter(n=>!notificationIds.has(n.id)).sort((a,b)=>new Date(a.date||0)-new Date(b.date||0));
+        if(newest.length){const n=newest[newest.length-1];if(n.byUsername!==currentUsername)showNotificationToast(n.title,n.message)}
+      }
+      notificationIds=new Set(incoming.map(n=>n.id));notificationsInitialized=true;data.notifications=sorted.slice(0,50);renderNotifications();
+    },err=>{
+      console.error('Notification listener failed:',err);
+      const code=err?.code||'unknown';
+      const msg=code==='permission-denied'?'Firestore denied access to /notifications. Publish the rules shown in the app setup.':code==='failed-precondition'?'Firestore is not ready or the database configuration is invalid.':`Firebase error: ${code}`;
+      showNotificationToast('Notifications unavailable',msg);
+      notificationRetryTimer=setTimeout(syncNotifications,5000);
+    });
+  }catch(e){
+    console.error('Notification setup failed:',e);
+    showNotificationToast('Notifications unavailable',`Firebase setup error: ${e?.code||e?.message||'unknown error'}`);
+    notificationRetryTimer=setTimeout(syncNotifications,5000);
+  }
+}
 function notificationSeenSet(){try{return new Set(JSON.parse(sessionStorage.getItem('spySeenNotifications')||'[]'))}catch(e){return new Set()}}
 function renderNotifications(){const seen=notificationSeenSet(), list=data.notifications.slice(0,20);$('notificationList').innerHTML=list.length?list.map(n=>`<div class="notification"><div class="notification-title">${esc(n.type==='collection'?'💰':n.type==='expense'?'🧾':n.type==='feedback'?'💬':'🔔')} ${esc(n.title||'Notification')}</div><div>${esc(n.message||'')}</div><div class="notification-time">${esc(n.byUsername?'@'+n.byUsername+' • ':'')}${n.date?new Date(n.date).toLocaleString('en-IN'):''}</div></div>`).join(''):'<small class="muted" style="display:block;padding:12px">No notifications.</small>';const unread=list.filter(n=>!seen.has(n.id)).length;$('bellCount').textContent=unread;$('bellCount').style.display=unread?'flex':'none'}
 window.toggleNotifications=(e)=>{e.stopPropagation();$('notificationPanel').classList.toggle('open');renderNotifications()};window.markNotificationsSeen=(e)=>{e.stopPropagation();sessionStorage.setItem('spySeenNotifications',JSON.stringify(data.notifications.map(n=>n.id)));renderNotifications()};document.addEventListener('click',e=>{if(!$('notificationPanel')?.contains(e.target)&&!e.target.closest('.bell-btn'))$('notificationPanel')?.classList.remove('open')});
