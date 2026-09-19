@@ -1,11 +1,20 @@
-# SPY Firebase PWA
-1. Firebase Console → Authentication → Sign-in method → enable Anonymous.
-2. Firebase Console → Firestore Database → Create database.
-3. Firestore → Rules → paste `firestore.rules` and Publish.
-4. Upload all files here to the root of your GitHub Pages repository.
-5. GitHub Settings → Pages → Deploy from branch → main → /(root).
-6. Share the GitHub Pages URL.
+# SPY Navaratri 2026 - Updated App
 
-Temporary committee password in `index.html`: `spy@2026`. Change it before sharing if desired.
+Updated features:
+- Centralized Firebase Firestore data
+- Shared committee password + unique usernames
+- Dashboard metrics: collections, expenses, balance, contributors, transactions, average collection, pending expenses
+- Complete PDF financial report
+- Date-range filtering for PDF
+- All collection and expense transactions with date, amount, payment mode/status, username and details
+- Committee member summary
+- Existing calendar and feedback features
+- PWA support
 
-This is deliberately a simple temporary-event design. Firebase client configuration is not a password. The shared committee password is a convenience gate, not strong authentication.
+Firebase Authentication: Anonymous sign-in must be enabled.
+Firestore rules: see firestore.rules.
+
+Committee password: spy@2026
+Admin password: spy@202627
+
+This is intentionally lightweight for the temporary committee use case. The committee password is a client-side gate; it is not strong security.

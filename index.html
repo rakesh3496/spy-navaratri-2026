@@ -2,14 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#6b0f1a">
-<meta name="description" content="Sri Pentamamba Youth — Sharan Navaratri Celebration 2026">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SPY">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SPY — Sri Pentamamba Youth</title>
 <style>
 :root{
@@ -28,7 +21,7 @@
   --green-bg:#123321; --red-bg:#3a1a16;
 }
 *{box-sizing:border-box;}
-body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:env(safe-area-inset-bottom);}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);}
 header{background:linear-gradient(135deg,var(--maroon),var(--maroon-d));color:#fff;padding:18px 16px 22px;text-align:center;position:relative;overflow:hidden;}
 header .day-emoji{font-size:34px;}
 header h1{margin:4px 0 2px;font-size:20px;letter-spacing:.5px;}
@@ -98,467 +91,70 @@ small.muted{color:var(--muted);}
 </style>
 </head>
 <body>
-
-<div id="loginScreen">
-  <div class="card">
-    <h2 style="text-align:center;">🪔 SPY Login</h2>
-    <label>User ID</label><input id="loginId" placeholder="e.g. admin9">
-    <label>Password</label>
-    <div style="position:relative;">
-      <input id="loginPass" type="password" style="padding-right:44px;">
-      <button type="button" onclick="togglePass()" style="position:absolute;right:4px;top:4px;margin:0;padding:6px 10px;font-size:12px;background:transparent;color:var(--maroon);" id="pwToggleBtn">👁️</button>
-    </div>
-    <button onclick="attemptLogin()" style="width:100%;">Login</button>
-    <div id="loginError" style="color:var(--red);font-size:12px;margin-top:6px;"></div>
-  </div>
+<div id="loginScreen"><div class="card">
+<h2 style="text-align:center;">🪔 SPY Login</h2>
+<label>Access password</label><div style="position:relative"><input id="loginPass" type="password" style="padding-right:44px"><button type="button" onclick="togglePass()" style="position:absolute;right:4px;top:4px;margin:0;padding:6px 10px;font-size:12px;background:transparent;color:var(--maroon);" id="pwToggleBtn">👁️</button></div>
+<button onclick="attemptLogin()" style="width:100%">Continue</button>
+<small class="muted" style="display:block;margin-top:8px">Committee members use the shared committee password. After entering it, create your own unique username and profile name.</small>
+<div id="loginError" style="color:var(--red);font-size:12px;margin-top:6px"></div></div></div>
+<div id="usernameSetup" style="display:none;max-width:360px;margin:60px auto;padding:20px"><div class="card"><h2 style="text-align:center">Create your username</h2><p class="muted" style="font-size:12px">Use a unique username such as <b>rakesh</b> or <b>anil</b>. It will identify your collections, expenses and activity.</p><label>Username</label><input id="customUserName" maxlength="30" placeholder="e.g. rakesh"><button onclick="continueWithUsername()" style="width:100%">Enter SPY</button><div id="usernameError" style="color:var(--red);font-size:12px;margin-top:6px"></div></div></div>
+<div id="profileSetup" style="display:none;max-width:360px;margin:60px auto;padding:20px"><div class="card"><h2 style="text-align:center">Set up your profile</h2><label>Your name</label><input id="pfName" placeholder="Full name"><label>Profile photo</label><input id="pfPhoto" type="file" accept="image/*"><button onclick="saveProfile()" style="width:100%">Continue</button></div></div>
+<div id="appContainer" style="display:none"><header><div class="topbar"><span id="whoAmI"></span><span><button class="secondary" style="padding:3px 9px;font-size:11px;margin:0 6px 0 0;color:#fff;border-color:#fff" onclick="openProfileEditor()">✏️ Profile</button><button class="secondary" style="padding:3px 9px;font-size:11px;margin:0;color:#fff;border-color:#fff" onclick="logout()">Logout</button></span></div><div class="day-emoji" id="dayEmoji">🪔</div><h1>Sri Pentamamba Youth</h1><p>Sharan Navaratri Celebration 2026</p></header><div class="wrap">
+<div id="tab-dashboard" class="tab active">
+<div class="hero-card"><div class="hero-top"><div><div class="hero-title">SPY • SRI PENTAMAMBA YOUTH</div><div class="hero-sub">Sharan Navaratri Utsavam 2026</div></div><div style="font-size:28px">🪔</div></div><div style="text-align:center;margin:18px 0 4px;font-size:13px;color:var(--gold-l)">Committee Funds Overview</div></div>
+<div class="two-col"><div class="stat green"><div class="stat-row"><span class="stat-icon">💰</span><div style="text-align:left"><div class="label">Total Collections</div><div class="amt" id="fundsCollected">₹0</div></div></div></div><div class="stat red"><div class="stat-row"><span class="stat-icon">🧾</span><div style="text-align:left"><div class="label">Total Expenses</div><div class="amt" id="fundsSpent">₹0</div></div></div></div></div>
+<div class="card"><div class="trio"><div><div class="t-label">Balance</div><div class="t-val" id="trioBalance">₹0</div></div><div><div class="t-label">Contributors</div><div class="t-val" id="metricContributors">0</div></div><div><div class="t-label">Transactions</div><div class="t-val" id="metricTransactions">0</div></div></div><div style="text-align:center;margin-top:10px"><small class="muted" id="miniStats"></small></div></div>
+<div class="two-col"><div class="stat"><div class="label">Average Collection</div><div class="amt" id="metricAverage">₹0</div></div><div class="stat"><div class="label">Pending Expenses</div><div class="amt" id="metricPending">₹0</div></div></div>
+<div class="card"><h2>📄 Financial Report</h2><p class="muted">Download a complete PDF with summary, every collection, every expense, member details and transaction history.</p><label>Report start date</label><input id="reportFrom" type="date"><label>Report end date</label><input id="reportTo" type="date"><button onclick="downloadReportPDF()" style="width:100%">⬇️ Download Report PDF</button></div>
+<div class="card"><div class="pill-row"><button class="pill active" id="pillColl" onclick="setEntryView('collections')">Collections (<span id="collCount">0</span>)</button><button class="pill" id="pillExp" onclick="setEntryView('expenses')">Expenses (<span id="expCount">0</span>)</button><select id="entryFilter" onchange="renderEntryList()" style="width:auto;flex:1;min-width:120px"></select></div><div id="entryListUnified"></div></div>
+<div class="card"><h2>⚠️ Pending Payments</h2><div id="pendingPayments"><small class="muted">Nothing pending.</small></div></div><div class="card"><h2>Top Contributors</h2><div id="topContributors"><small class="muted">No collections yet.</small></div></div>
 </div>
-
-<div id="profileSetup" style="display:none;">
-  <div class="card">
-    <h2 style="text-align:center;">Set up your profile</h2>
-    <label>Username</label><input id="pfUsername" placeholder="e.g. rakesh" maxlength="30" autocomplete="username"><small class="muted">3–30 characters: letters, numbers or underscore. Must be unique.</small><label>Your name</label><input id="pfName" placeholder="Full name">
-    <label>Profile photo</label><input id="pfPhoto" type="file" accept="image/*">
-    <small class="muted" id="pfCurrentNote" style="display:none;">Leave photo blank to keep your current one.</small>
-    <button onclick="saveProfile()" style="width:100%;">Continue</button>
-    <button class="secondary" id="pfCancelBtn" style="width:100%;display:none;" onclick="cancelProfileEdit()">Cancel</button>
-  </div>
-</div>
-
-<div id="appContainer" style="display:none;">
-<header>
-  <div class="topbar">
-    <span id="whoAmI"></span>
-    <span>
-      <button class="secondary" style="padding:3px 9px;font-size:11px;margin:0 6px 0 0;color:#fff;border-color:#fff;" onclick="openProfileEditor()">✏️ Profile</button>
-      <button class="secondary" style="padding:3px 9px;font-size:11px;margin:0;color:#fff;border-color:#fff;" onclick="logout()">Logout</button>
-    </span>
-  </div>
-  <div class="day-emoji" id="dayEmoji">🪔</div>
-  <h1>Sri Pentamamba Youth</h1>
-  <p>Sharan Navaratri Celebration 2026</p>
-</header>
-<div class="wrap">
-
-  <div id="tab-dashboard" class="tab active">
-    <div class="hero-card">
-      <div class="hero-top">
-        <div>
-          <div class="hero-title">SPY • SRI PENTAMAMBA YOUTH</div>
-          <div class="hero-sub">Sharan Navaratri Utsavam 2026</div>
-        </div>
-      </div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="two-col">
-      <div class="stat green"><div class="stat-row"><span class="stat-icon">💵</span><div style="text-align:left;"><div class="label">Funds in Hand</div><div class="amt" id="fundsAmt">₹0</div></div></div></div>
-      <div class="stat red"><div class="stat-row"><span class="stat-icon">⚠️</span><div style="text-align:left;"><div class="label">Amount Short</div><div class="amt" id="shortAmt">₹0</div></div></div></div>
-    </div>
-
-    <div class="card">
-      <div class="trio">
-        <div><div class="t-label">Collections</div><div class="t-val" id="trioCollected">₹0</div></div>
-        <div><div class="t-label">Committed Spend</div><div class="t-val" id="trioSpend">₹0</div></div>
-        <div><div class="t-label">Balance</div><div class="t-val" id="trioGap">₹0</div></div>
-      </div>
-      <div style="text-align:center;margin-top:10px;"><small class="muted" id="miniStats"></small></div>
-    </div><div class="card">
-      <div class="pill-row">
-        <button class="pill active" id="pillColl" onclick="setEntryView('collections')">Collections (<span id="collCount">0</span>)</button>
-        <button class="pill" id="pillExp" onclick="setEntryView('expenses')">Expenses (<span id="expCount">0</span>)</button>
-        <select id="entryFilter" onchange="renderEntryList()" style="width:auto;flex:1;min-width:120px;"></select>
-      </div>
-      <div id="entryListUnified"></div>
-    </div>
-
-    <div class="card">
-      <h2>⚠️ Pending Payments</h2>
-      <div id="pendingPayments"><small class="muted">Nothing pending.</small></div>
-    </div>
-    <div class="card">
-      <h2>Top Contributors</h2>
-      <div id="topContributors"><small class="muted">No collections yet.</small></div>
-    </div>
-  </div>
-
-  <div id="tab-collect" class="tab">
-    <div class="card">
-      <h2>Add Collection</h2>
-      <label>Name</label><input id="cName" placeholder="Contributor name">
-      <label>Contact / details</label><input id="cContact" placeholder="Phone, house no, etc.">
-      <label>Amount (₹)</label><input id="cAmount" type="number">
-      <label>Payment mode</label>
-      <select id="cMode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option></select>
-      <button onclick="addCollection()">Add Collection</button>
-    </div>
-    <div class="card"><h2>All Collections</h2><div id="collectionList"></div></div>
-  </div>
-
-  <div id="tab-expense" class="tab">
-    <div class="card">
-      <h2>Add Expense</h2>
-      <label>Expense / Event name</label><input id="eName" placeholder="e.g. Pandal decoration">
-      <label>Description</label><input id="eDesc" placeholder="Details">
-      <label>Total agreed amount (₹)</label><input id="eAmount" type="number">
-      <label>Status</label>
-      <select id="eStatus" onchange="toggleAdvance()"><option value="full">Fully Paid</option><option value="advance">Advance Paid</option></select>
-      <div id="advanceField" style="display:none;">
-        <label>Amount paid so far (₹)</label><input id="ePaid" type="number">
-      </div>
-      <button onclick="addExpense()">Add Expense</button>
-    </div>
-    <div class="card"><h2>All Expenses</h2><div id="expenseList"></div></div>
-  </div>
-
-  <div id="tab-calendar" class="tab">
-    <div class="card">
-      <h2>October 2026 — Navaratri (10th–21st)</h2>
-      <div class="cal-grid" id="calGrid"></div>
-      <label style="margin-top:12px;">Add note for a highlighted day</label>
-      <select id="calDaySel"></select>
-      <input id="calNote" placeholder="e.g. Chandraghanta Puja">
-      <button onclick="saveCalNote()">Save Day Note</button>
-      <div id="calNotesList" style="margin-top:10px;"></div>
-    </div>
-  </div>
-
-  <div id="tab-feedback" class="tab">
-    <div class="card">
-      <h2>Feedback</h2>
-      <label>Name</label><input id="fName">
-      <label>Category</label>
-      <select id="fCategory"><option>Event</option><option>Money</option><option>Other</option></select>
-      <label>Feedback</label><textarea id="fDesc" rows="3"></textarea>
-      <button onclick="addFeedback()">Submit Feedback</button>
-      <small class="muted">Committee members are notified when feedback is submitted.</small>
-    </div>
-    <div class="card"><h2>Recent Feedback</h2><div id="feedbackList"></div></div>
-  </div>
-
-  <div id="tab-team" class="tab">
-    <div class="card">
-      <h2>Committee Team</h2>
-      <div id="teamList"></div>
-      <small class="muted">Admin can promote/demote Editor ↔ Viewer.</small>
-    </div>
-  </div>
-
-</div>
-
-<nav>
-  <button class="active" onclick="showTab('dashboard',this)">📊<br>Dashboard</button>
-  <button onclick="showTab('collect',this)">💰<br>Collect</button>
-  <button onclick="showTab('expense',this)">🧾<br>Expense</button>
-  <button onclick="showTab('calendar',this)">📅<br>Calendar</button>
-  <button onclick="showTab('feedback',this)">💬<br>Feedback</button>
-  <button id="teamNavBtn" onclick="showTab('team',this)" style="display:none;">👥<br>Team</button>
-</nav>
-</div>
-
+<div id="tab-collect" class="tab"><div class="card"><h2>Add Collection</h2><label>Name</label><input id="cName" placeholder="Contributor name"><label>Contact / details</label><input id="cContact" placeholder="Phone, house no, etc."><label>Amount (₹)</label><input id="cAmount" type="number"><label>Payment mode</label><select id="cMode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option></select><button onclick="addCollection()">Add Collection</button></div><div class="card"><h2>All Collections</h2><div id="collectionList"></div></div></div>
+<div id="tab-expense" class="tab"><div class="card"><h2>Add Expense</h2><label>Expense / Event name</label><input id="eName" placeholder="e.g. Pandal decoration"><label>Description</label><input id="eDesc" placeholder="Details"><label>Total agreed amount (₹)</label><input id="eAmount" type="number"><label>Status</label><select id="eStatus" onchange="toggleAdvance()"><option value="full">Fully Paid</option><option value="advance">Advance Paid</option></select><div id="advanceField" style="display:none"><label>Amount paid so far (₹)</label><input id="ePaid" type="number"></div><button onclick="addExpense()">Add Expense</button></div><div class="card"><h2>All Expenses</h2><div id="expenseList"></div></div></div>
+<div id="tab-calendar" class="tab"><div class="card"><h2>October 2026 — Navaratri (10th–21st)</h2><div class="cal-grid" id="calGrid"></div><label style="margin-top:12px">Add note for a highlighted day</label><select id="calDaySel"></select><input id="calNote" placeholder="e.g. Chandraghanta Puja"><button onclick="saveCalNote()">Save Day Note</button><div id="calNotesList" style="margin-top:10px"></div></div></div>
+<div id="tab-feedback" class="tab"><div class="card"><h2>Feedback</h2><label>Name</label><input id="fName"><label>Category</label><select id="fCategory"><option>Event</option><option>Money</option><option>Other</option></select><label>Feedback</label><textarea id="fDesc" rows="3"></textarea><button onclick="addFeedback()">Submit Feedback</button></div><div class="card"><h2>Recent Feedback</h2><div id="feedbackList"></div></div></div>
+<div id="tab-team" class="tab"><div class="card"><h2>Committee Team</h2><div id="teamList"></div><small class="muted">Committee members are identified by their usernames.</small></div></div>
+</div><nav><button class="active" onclick="showTab('dashboard',this)">📊<br>Dashboard</button><button onclick="showTab('collect',this)">💰<br>Collect</button><button onclick="showTab('expense',this)">🧾<br>Expense</button><button onclick="showTab('calendar',this)">📅<br>Calendar</button><button onclick="showTab('feedback',this)">💬<br>Feedback</button><button id="teamNavBtn" onclick="showTab('team',this)" style="display:none">👥<br>Team</button></nav></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 <script type="module">
-const DAY_EMOJIS=['🪔','🌺','🕉️','✨','🙏','🌸','🔱','🎊','👑'];
-function todayEmoji(){
-  const d=new Date();
-  if(d.getMonth()===9 && d.getDate()>=10 && d.getDate()<=21) return DAY_EMOJIS[d.getDate()-10];
-  return '🪔';
-}
-document.getElementById('dayEmoji').textContent=todayEmoji();
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBiUz3d_PdcllLXnvGzr2dPkkoMUJL10Is",
-  authDomain: "spy-navaratri-2026.firebaseapp.com",
-  projectId: "spy-navaratri-2026",
-  storageBucket: "spy-navaratri-2026.firebasestorage.app",
-  messagingSenderId: "927829850729",
-  appId: "1:927829850729:web:736bd205592476ab6140f8",
-  measurementId: "G-HXLDKGZMKK"
-};
-
-const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js");
-const { getAuth, signInAnonymously, onAuthStateChanged } =
-  await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js");
-const {
-  getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc,
-  onSnapshot, query, orderBy, serverTimestamp, runTransaction
-} = await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js");
-
-const fbApp = initializeApp(firebaseConfig);
-const auth = getAuth(fbApp);
-const db = getFirestore(fbApp);
-
-// Temporary committee gate. Change this before sharing if desired.
-const COMMITTEE_PASSWORD = "spy@2026";
-
-let currentUserId = null;
-let currentUserProfile = null;
-let data = {collections:[],expenses:[],calNotes:{},feedback:[],profiles:{},roles:{},activity:{}};
-let unsubscribers = [];
-let entryView = 'collections';
-
-function esc(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
-function normalizeUsername(v){ return String(v||'').trim().toLowerCase(); }
-function validUsername(v){ return /^[a-z0-9_]{3,30}$/.test(v); }
-function roleOf(uid){ return data.profiles[uid]?.role || 'editor'; }
-function nameOf(uid){ return data.profiles[uid]?.name || uid || 'User'; }
-function photoOf(uid){ return data.profiles[uid]?.photo; }
-function avatarHtml(uid,size){
-  const p=photoOf(uid), cls=size==='sm'?'avatar-sm':'avatar';
-  return p?`<img class="${cls}" src="${esc(p)}">`:`<span class="${cls}">${esc(nameOf(uid)[0]?.toUpperCase()||'?')}</span>`;
-}
-function fmt(n){ return '₹'+Number(n||0).toLocaleString('en-IN'); }
-function badgeFor(total){ if(total>=20000)return'💎'; if(total>=10000)return'🥇'; if(total>=5000)return'🥈'; if(total>0)return'🥉'; return''; }
-function setLoginError(msg){ document.getElementById('loginError').textContent=msg; }
-
-async function ensureAuth(){
-  if(auth.currentUser) return auth.currentUser;
-  return (await signInAnonymously(auth)).user;
-}
-async function getProfile(uid){
-  const s=await getDoc(doc(db,'users',uid));
-  return s.exists()?s.data():null;
-}
-async function saveUser(uid, obj){ await setDoc(doc(db,'users',uid),obj,{merge:true}); }
-
-async function createUniqueUsername(username,uid,name,photo){
-  await runTransaction(db,async tx=>{
-    const uref=doc(db,'usernames',username);
-    const us=await tx.get(uref);
-    if(us.exists() && us.data().uid!==uid) throw new Error('USERNAME_TAKEN');
-    tx.set(uref,{uid,username,updatedAt:serverTimestamp()},{merge:true});
-    tx.set(doc(db,'users',uid),{
-      uid,username,name,photo:photo||null,role:'editor',
-      createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-    },{merge:true});
-  });
-}
-
-async function attemptLogin(){
-  setLoginError('');
-  if(document.getElementById('loginPass').value.trim()!==COMMITTEE_PASSWORD){
-    setLoginError('Invalid committee password.'); return;
-  }
-  try{
-    await ensureAuth();
-    currentUserId=auth.currentUser.uid;
-    currentUserProfile=await getProfile(currentUserId);
-    if(!currentUserProfile){
-      document.getElementById('loginScreen').style.display='none';
-      document.getElementById('profileSetup').style.display='block';
-      document.getElementById('pfUsername').disabled=false;
-      document.getElementById('pfUsername').value='';
-      document.getElementById('pfName').value='';
-    }else enterApp();
-  }catch(e){ console.error(e); setLoginError('Unable to connect to Firebase.'); }
-}
-
-let editingProfile=false;
-function openProfileEditor(){
-  editingProfile=true;
-  document.getElementById('pfUsername').value=currentUserProfile?.username||'';
-  document.getElementById('pfUsername').disabled=true;
-  document.getElementById('pfName').value=nameOf(currentUserId);
-  document.getElementById('pfPhoto').value='';
-  document.getElementById('pfCurrentNote').style.display='block';
-  document.getElementById('pfCancelBtn').style.display='block';
-  document.getElementById('appContainer').style.display='none';
-  document.getElementById('profileSetup').style.display='block';
-}
-function cancelProfileEdit(){
-  editingProfile=false;
-  document.getElementById('pfUsername').disabled=false;
-  document.getElementById('profileSetup').style.display='none';
-  document.getElementById('appContainer').style.display='block';
-}
-async function saveProfile(){
-  const name=document.getElementById('pfName').value.trim();
-  const username=normalizeUsername(document.getElementById('pfUsername').value);
-  if(!name){alert('Enter your name');return;}
-  if(!validUsername(username)){alert('Username must be 3–30 characters using letters, numbers or underscore.');return;}
-  const file=document.getElementById('pfPhoto').files[0];
-  const oldPhoto=currentUserProfile?.photo||null;
-  const finish=async(photo)=>{
-    try{
-      if(editingProfile) await saveUser(currentUserId,{name,photo:photo??oldPhoto,updatedAt:serverTimestamp()});
-      else await createUniqueUsername(username,currentUserId,name,photo||null);
-      currentUserProfile=await getProfile(currentUserId);
-      document.getElementById('profileSetup').style.display='none';
-      document.getElementById('pfCurrentNote').style.display='none';
-      document.getElementById('pfCancelBtn').style.display='none';
-      document.getElementById('pfUsername').disabled=false;
-      editingProfile=false;
-      enterApp();
-    }catch(e){
-      if(e.message==='USERNAME_TAKEN') alert('That username already exists. Please choose another.');
-      else {console.error(e);alert('Could not save profile.');}
-    }
-  };
-  if(file){const r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(file);} else finish(oldPhoto);
-}
-function logout(){unsubscribers.forEach(u=>{try{u()}catch(e){}});location.reload();}
-
-function enterApp(){
-  if(!currentUserProfile)return;
-  document.getElementById('appContainer').style.display='block';
-  const role=roleOf(currentUserId);
-  document.getElementById('whoAmI').innerHTML=`${avatarHtml(currentUserId,'sm')} ${esc(nameOf(currentUserId))} <span class="role-pill">${esc(role)}</span>`;
-  applyRolePermissions(role); buildCalendar(); startRealtime(); render();
-}
-function applyRolePermissions(role){
-  const canEdit=role==='admin'||role==='editor';
-  document.querySelectorAll('#tab-collect .card:first-child,#tab-expense .card:first-child').forEach(el=>el.style.display=canEdit?'block':'none');
-  if(role==='admin')document.getElementById('teamNavBtn').style.display='block';
-}
-
-function startRealtime(){
-  unsubscribers.forEach(u=>{try{u()}catch(e){}}); unsubscribers=[];
-  const bind=(path,key,mapper)=>{
-    const q=query(collection(db,path),orderBy('createdAt','asc'));
-    const u=onSnapshot(q,s=>{data[key]=s.docs.map(d=>mapper(d.id,d.data()));render();},e=>console.error(path,e));
-    unsubscribers.push(u);
-  };
-  bind('collections','collections',(id,x)=>({id,...x}));
-  bind('expenses','expenses',(id,x)=>({id,...x}));
-  bind('feedback','feedback',(id,x)=>({id,...x}));
-  bind('calendarNotes','calNotes',(id,x)=>({id,...x}));
-  unsubscribers.push(onSnapshot(collection(db,'users'),s=>{
-    data.profiles={}; data.roles={};
-    s.docs.forEach(d=>{data.profiles[d.id]=d.data();data.roles[d.id]=d.data().role||'editor';});
-    render(); renderTeam();
-  },e=>console.error('users',e)));
-}
-
-function stamp(o){return {...o,by:currentUserId,createdAt:serverTimestamp()};}
-
-function setEntryView(view){
-  entryView=view;
-  document.getElementById('pillColl').classList.toggle('active',view==='collections');
-  document.getElementById('pillExp').classList.toggle('active',view==='expenses');
-  const sel=document.getElementById('entryFilter');
-  sel.innerHTML=view==='collections'
-    ?'<option value="all">All Entries</option><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option>'
-    :'<option value="all">All Entries</option><option value="full">Fully Paid</option><option value="advance">Advance Paid</option>';
-  renderEntryList();
-}
-function renderEntryList(){
-  const filter=document.getElementById('entryFilter').value,list=document.getElementById('entryListUnified');
-  if(entryView==='collections'){
-    let a=data.collections.slice();if(filter!=='all')a=a.filter(c=>c.mode===filter);
-    list.innerHTML=a.reverse().map(c=>`<div class="item entry-row"><span class="entry-icon">🧑</span><span style="flex:1;">${esc(c.name)}<br><small class="muted">${esc(c.mode)}</small></span><span class="entry-amt-pos">+${fmt(c.amount)}</span></div>`).join('')||'<small class="muted">No entries.</small>';
-  }else{
-    let a=data.expenses.slice();if(filter!=='all')a=a.filter(e=>e.status===filter);
-    list.innerHTML=a.reverse().map(e=>`<div class="item entry-row"><span class="entry-icon" style="background:var(--red-bg);">🧾</span><span style="flex:1;">${esc(e.name)}<br><small class="muted">${e.status==='advance'?'Advance':'Fully Paid'}</small></span><span class="entry-amt-neg">-${fmt(e.amount)}</span></div>`).join('')||'<small class="muted">No entries.</small>';
-  }
-}
-function showTab(name,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  if(name==='team')renderTeam();
-}
-function switchToTab(name){const order=['dashboard','collect','expense','calendar','feedback','team'];showTab(name,document.querySelectorAll('nav button')[order.indexOf(name)]);}
-
-async function deleteCollection(id){if(confirm('Delete this collection entry?'))await deleteDoc(doc(db,'collections',id));}
-async function editCollection(id){
-  const c=data.collections.find(x=>x.id===id);if(!c)return;
-  document.getElementById('cName').value=c.name;document.getElementById('cContact').value=c.contact||'';
-  document.getElementById('cAmount').value=c.amount;document.getElementById('cMode').value=c.mode;
-  await deleteDoc(doc(db,'collections',id));switchToTab('collect');
-}
-async function deleteExpense(id){if(confirm('Delete this expense entry?'))await deleteDoc(doc(db,'expenses',id));}
-async function editExpense(id){
-  const e=data.expenses.find(x=>x.id===id);if(!e)return;
-  document.getElementById('eName').value=e.name;document.getElementById('eDesc').value=e.desc||'';
-  document.getElementById('eAmount').value=e.amount;document.getElementById('eStatus').value=e.status;toggleAdvance();
-  document.getElementById('ePaid').value=e.paid;await deleteDoc(doc(db,'expenses',id));switchToTab('expense');
-}
-function toggleAdvance(){document.getElementById('advanceField').style.display=document.getElementById('eStatus').value==='advance'?'block':'none';}
-
-async function addCollection(){
-  const name=document.getElementById('cName').value.trim(),amount=parseFloat(document.getElementById('cAmount').value);
-  if(!name||!amount){alert('Enter name and amount');return;}
-  await addDoc(collection(db,'collections'),stamp({name,contact:document.getElementById('cContact').value,amount,mode:document.getElementById('cMode').value}));
-  document.getElementById('cName').value='';document.getElementById('cContact').value='';document.getElementById('cAmount').value='';
-}
-async function addExpense(){
-  const name=document.getElementById('eName').value.trim(),amount=parseFloat(document.getElementById('eAmount').value);
-  if(!name||!amount){alert('Enter name and amount');return;}
-  const status=document.getElementById('eStatus').value,paid=status==='advance'?(parseFloat(document.getElementById('ePaid').value)||0):amount;
-  await addDoc(collection(db,'expenses'),stamp({name,desc:document.getElementById('eDesc').value,amount,status,paid}));
-  document.getElementById('eName').value='';document.getElementById('eDesc').value='';document.getElementById('eAmount').value='';document.getElementById('ePaid').value='';
-}
-async function addFeedback(){
-  const name=document.getElementById('fName').value.trim(),desc=document.getElementById('fDesc').value.trim();
-  if(!name||!desc){alert('Enter name and feedback');return;}
-  await addDoc(collection(db,'feedback'),stamp({name,category:document.getElementById('fCategory').value,desc}));
-  document.getElementById('fName').value='';document.getElementById('fDesc').value='';alert('Feedback submitted.');
-}
-async function saveCalNote(){
-  const day=document.getElementById('calDaySel').value,note=document.getElementById('calNote').value.trim();if(!note)return;
-  await setDoc(doc(db,'calendarNotes',String(day)),stamp({day,note}),{merge:true});document.getElementById('calNote').value='';
-}
-function buildCalendar(){
-  const grid=document.getElementById('calGrid'),sel=document.getElementById('calDaySel');grid.innerHTML='';sel.innerHTML='';
-  ['S','M','T','W','T','F','S'].forEach(d=>{const c=document.createElement('div');c.textContent=d;c.style.fontWeight='700';c.style.fontSize='11px';grid.appendChild(c);});
-  const firstDow=new Date(2026,9,1).getDay();for(let i=0;i<firstDow;i++)grid.appendChild(document.createElement('div'));
-  for(let day=1;day<=31;day++){const c=document.createElement('div');c.className='cal-day';c.textContent=day;
-    if(day>=10&&day<=21){c.classList.add('fest');const o=document.createElement('option');o.value=day;o.textContent='Oct '+day;sel.appendChild(o);}grid.appendChild(c);}
-}
-function renderTeam(){
-  const list=document.getElementById('teamList');if(!list)return;
-  const isAdmin=roleOf(currentUserId)==='admin';
-  list.innerHTML=Object.entries(data.profiles).map(([uid,p])=>{
-    const role=p.role||'editor';
-    const ctl=isAdmin&&uid!==currentUserId
-      ?`<select onchange="changeRole('${uid}',this.value)" style="width:auto;font-size:12px;padding:3px 6px;"><option value="editor" ${role==='editor'?'selected':''}>Editor</option><option value="viewer" ${role==='viewer'?'selected':''}>Viewer</option></select>`
-      :`<span class="role-pill">${esc(role)}</span>`;
-    return `<div class="item"><span>${avatarHtml(uid,'sm')} ${esc(p.name||p.username)} <small class="muted">@${esc(p.username||'')}</small></span>${ctl}</div>`;
-  }).join('')||'<small class="muted">No members yet.</small>';
-}
-async function changeRole(uid,newRole){if(roleOf(currentUserId)==='admin')await updateDoc(doc(db,'users',uid),{role:newRole,updatedAt:serverTimestamp()});}
-
-function render(){
-  const totalCollected=data.collections.reduce((s,c)=>s+Number(c.amount||0),0);
-  const totalSpent=data.expenses.reduce((s,e)=>s+Number(e.paid||0),0);
-  const totalOwed=data.expenses.reduce((s,e)=>s+Math.max(Number(e.amount||0)-Number(e.paid||0),0),0);
-  const funds=totalCollected-totalSpent;
-  document.getElementById('fundsAmt').textContent=fmt(funds);document.getElementById('shortAmt').textContent=fmt(totalOwed);
-  const committedSpend=data.expenses.reduce((s,e)=>s+Number(e.amount||0),0);
-  document.getElementById('trioCollected').textContent=fmt(totalCollected);document.getElementById('trioSpend').textContent=fmt(committedSpend);document.getElementById('trioGap').textContent=fmt(funds);
-  const n=new Set(data.collections.map(c=>c.name)).size,avg=n?totalCollected/n:0,now=new Date(),start=new Date(2026,9,10),end=new Date(2026,9,21);
-  let days='Navaratri: Oct 10–21, 2026';if(now<start)days=Math.ceil((start-now)/86400000)+' days to go';else if(now<=end)days='Day '+(Math.floor((now-start)/86400000)+1)+' of 12';else days='Navaratri concluded';
-  document.getElementById('miniStats').textContent=`${n} contributors • Avg ${fmt(Math.round(avg))} • 🗓️ ${days}`;
-  document.getElementById('collCount').textContent=data.collections.length;document.getElementById('expCount').textContent=data.expenses.length;
-  if(!document.getElementById('entryFilter').options.length)setEntryView('collections');else renderEntryList();
-  const pending=data.expenses.filter(e=>Number(e.amount)-Number(e.paid)>0);
-  document.getElementById('pendingPayments').innerHTML=pending.length?pending.map(e=>`<div class="item"><span>${esc(e.name)}</span><span class="amt" style="color:var(--red);">${fmt(e.amount-e.paid)}</span></div>`).join(''):'<small class="muted">Nothing pending.</small>';
-  const by={};data.collections.forEach(c=>by[c.name]=(by[c.name]||0)+Number(c.amount||0));const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('topContributors').innerHTML=top.length?top.map(([n,a])=>`<div class="item"><span>${esc(n)} <span class="badge">${badgeFor(a)}</span></span><span class="amt">${fmt(a)}</span></div>`).join(''):'<small class="muted">No collections yet.</small>';
-  const canEdit=roleOf(currentUserId)==='admin'||roleOf(currentUserId)==='editor';
-  document.getElementById('collectionList').innerHTML=data.collections.slice().reverse().map(c=>{
-    const btns=canEdit?`<button class="secondary" style="padding:3px 7px;margin:0 0 0 6px;font-size:12px;" onclick="editCollection('${c.id}')">✏️</button><button class="secondary" style="padding:3px 7px;margin:0;font-size:12px;" onclick="deleteCollection('${c.id}')">🗑️</button>`:'';
-    return `<div class="item"><span>${esc(c.name)} <small class="muted">(${esc(c.mode)})</small><br><small class="muted">by @${esc(data.profiles[c.by]?.username||'unknown')}</small></span><span><span class="amt">${fmt(c.amount)}</span>${btns}</span></div>`;
-  }).join('')||'<small class="muted">No entries yet.</small>';
-  document.getElementById('expenseList').innerHTML=data.expenses.slice().reverse().map(e=>{
-    const bal=Number(e.amount)-Number(e.paid),balHtml=bal>0?`<br><small style="color:var(--red);font-weight:700;">Balance due: ${fmt(bal)}</small>`:`<br><small style="color:var(--green);">Fully settled</small>`;
-    const btns=canEdit?`<br><button class="secondary" style="padding:3px 7px;margin-top:4px;font-size:12px;" onclick="editExpense('${e.id}')">✏️</button><button class="secondary" style="padding:3px 7px;margin:4px 0 0 4px;font-size:12px;" onclick="deleteExpense('${e.id}')">🗑️</button>`:'';
-    return `<div class="item"><span>${esc(e.name)}${balHtml}<br><small class="muted">by @${esc(data.profiles[e.by]?.username||'unknown')}</small></span><span style="text-align:right;">${fmt(e.amount)}<br><small class="muted">paid ${fmt(e.paid)}</small>${btns}</span></div>`;
-  }).join('')||'<small class="muted">No entries yet.</small>';
-  document.getElementById('feedbackList').innerHTML=data.feedback.slice().reverse().map(f=>`<div class="item"><span>${esc(f.name)} <small class="muted">(${esc(f.category)})</small><br><small>${esc(f.desc)}</small><br><small class="muted">by @${esc(data.profiles[f.by]?.username||'unknown')}</small></span></div>`).join('')||'<small class="muted">No feedback yet.</small>';
-  document.getElementById('calNotesList').innerHTML=Object.entries(data.calNotes).sort((a,b)=>Number(a[0])-Number(b[0])).map(([d,n])=>`<div class="item"><span>Oct ${esc(d)}</span><span>${esc(n.note||'')}</span></div>`).join('')||'<small class="muted">No day notes yet.</small>';
-}
-
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-onAuthStateChanged(auth,async user=>{
-  if(user){
-    currentUserId=user.uid;
-    currentUserProfile=await getProfile(user.uid);
-    if(currentUserProfile) enterApp();
-  }
-});
-ensureAuth().catch(e=>console.error(e));
-
-</script>
-</body>
-</html>
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp, runTransaction } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+const firebaseConfig={apiKey:'AIzaSyBiUz3d_PdcllLXnvGzr2dPkkoMUJL10Is',authDomain:'spy-navaratri-2026.firebaseapp.com',projectId:'spy-navaratri-2026',storageBucket:'spy-navaratri-2026.firebasestorage.app',messagingSenderId:'927829850729',appId:'1:927829850729:web:736bd205592476ab6140f8',measurementId:'G-HXLDKGZMKK'};
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const COMMITTEE_PASS='spy@2026', ADMIN_PASS='spy@202627';
+let currentUserId=null,currentUsername=null,currentRole=sessionStorage.getItem('spyAccessRole')||null, data={collections:[],expenses:[],feedback:[],calNotes:{},profiles:{},activity:{}};
+const $=id=>document.getElementById(id), fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function nameOf(uid){return data.profiles[uid]?.name||uid||'Unknown'}
+function roleOf(){return currentRole||'viewer'}
+function avatarHtml(uid){return `<span class="avatar-sm">${esc(nameOf(uid).charAt(0).toUpperCase())}</span>`}
+window.togglePass=()=>{const f=$('loginPass'),b=$('pwToggleBtn');f.type=f.type==='password'?'text':'password';b.textContent=f.type==='password'?'👁️':'🙈'};
+window.attemptLogin=async()=>{const pass=$('loginPass').value.trim();if(pass!==COMMITTEE_PASS&&pass!==ADMIN_PASS){$('loginError').textContent='Invalid access password.';return}currentRole=pass===ADMIN_PASS?'admin':'editor';sessionStorage.setItem('spyAccessRole',currentRole);$('loginScreen').style.display='none';$('usernameSetup').style.display='block';};
+window.continueWithUsername=async()=>{const u=$('customUserName').value.trim().toLowerCase().replace(/[^a-z0-9_.-]/g,'');if(u.length<2){$('usernameError').textContent='Username must have at least 2 letters/numbers.';return}if(!currentUserId){$('usernameError').textContent='Connecting to Firebase…';return}try{const ref=doc(db,'usernames',u);await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(snap.exists()&&snap.data().uid!==currentUserId)throw new Error('USERNAME_TAKEN');tx.set(ref,{uid:currentUserId,username:u,createdAt:serverTimestamp()},{merge:true});});currentUsername=u;sessionStorage.setItem('spyUsername',u);const p=await getDoc(doc(db,'users',currentUserId));if(p.exists()){data.profiles[currentUserId]=p.data();enterApp()}else{$('usernameSetup').style.display='none';$('profileSetup').style.display='block';}}catch(e){$('usernameError').textContent=e.message==='USERNAME_TAKEN'?'That username is already in use. Choose another.':'Could not save username. Please try again.'}};
+window.saveProfile=async()=>{const n=$('pfName').value.trim();if(!n){alert('Enter your name');return}let photo='';const file=$('pfPhoto').files[0];if(file){photo=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file)})}const profile={name:n,username:currentUsername,photo};await setDoc(doc(db,'users',currentUserId),profile,{merge:true});data.profiles[currentUserId]=profile;$('profileSetup').style.display='none';enterApp()};
+window.openProfileEditor=()=>{ $('pfName').value=nameOf(currentUserId); $('pfPhoto').value=''; $('appContainer').style.display='none'; $('profileSetup').style.display='block';};
+window.logout=()=>{sessionStorage.clear();location.reload()};
+function enterApp(){ $('appContainer').style.display='block';$('whoAmI').innerHTML=`${avatarHtml(currentUserId)} ${esc(nameOf(currentUserId))} <span class="role-pill">${roleOf()}</span>`;if(roleOf()==='admin')$('teamNavBtn').style.display='block';buildCalendar();render();}
+window.showTab=(name,btn)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));$('tab-'+name).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(name==='team')renderTeam()};
+window.switchToTab=name=>{const names=['dashboard','collect','expense','calendar','feedback','team'];const i=names.indexOf(name);showTab(name,document.querySelectorAll('nav button')[i])};
+function syncCollection(name,arr,transform){onSnapshot(query(collection(db,name)),snap=>{data[arr]=snap.docs.map(d=>({id:d.id,...d.data()}));render()})}
+function syncUsers(){onSnapshot(collection(db,'users'),snap=>{snap.forEach(d=>data.profiles[d.id]=d.data());renderTeam();render()})}
+function syncNotes(){onSnapshot(collection(db,'calendarNotes'),snap=>{data.calNotes={};snap.forEach(d=>data.calNotes[d.id]=d.data().note||'');render()})}
+function syncFeedback(){onSnapshot(query(collection(db,'feedback')),snap=>{data.feedback=snap.docs.map(d=>({id:d.id,...d.data()}));render()})}
+async function startSync(){syncCollection('collections','collections');syncCollection('expenses','expenses');syncUsers();syncNotes();syncFeedback()}
+window.addCollection=async()=>{const name=$('cName').value.trim(),amount=parseFloat($('cAmount').value);if(!name||!amount){alert('Enter name and amount');return}await addDoc(collection(db,'collections'),{name,contact:$('cContact').value.trim(),amount,mode:$('cMode').value,date:new Date().toISOString(),by:currentUserId,byUsername:currentUsername,createdAt:serverTimestamp()});$('cName').value='';$('cContact').value='';$('cAmount').value=''};
+window.addExpense=async()=>{const name=$('eName').value.trim(),amount=parseFloat($('eAmount').value);if(!name||!amount){alert('Enter expense name and amount');return}const status=$('eStatus').value,paid=status==='advance'?(parseFloat($('ePaid').value)||0):amount;await addDoc(collection(db,'expenses'),{name,desc:$('eDesc').value.trim(),amount,status,paid,date:new Date().toISOString(),by:currentUserId,byUsername:currentUsername,createdAt:serverTimestamp()});$('eName').value='';$('eDesc').value='';$('eAmount').value='';$('ePaid').value=''};
+window.deleteCollection=async id=>{if(confirm('Delete this collection entry?'))await deleteDoc(doc(db,'collections',id))};window.deleteExpense=async id=>{if(confirm('Delete this expense entry?'))await deleteDoc(doc(db,'expenses',id))};
+window.editCollection=async id=>{const c=data.collections.find(x=>x.id===id);if(!c)return;$('cName').value=c.name;$('cContact').value=c.contact||'';$('cAmount').value=c.amount;$('cMode').value=c.mode;await deleteDoc(doc(db,'collections',id));switchToTab('collect')};
+window.editExpense=async id=>{const e=data.expenses.find(x=>x.id===id);if(!e)return;$('eName').value=e.name;$('eDesc').value=e.desc||'';$('eAmount').value=e.amount;$('eStatus').value=e.status;toggleAdvance();$('ePaid').value=e.paid;await deleteDoc(doc(db,'expenses',id));switchToTab('expense')};
+window.toggleAdvance=()=>{$('advanceField').style.display=$('eStatus').value==='advance'?'block':'none'};
+let entryView='collections';window.setEntryView=view=>{entryView=view;$('pillColl').classList.toggle('active',view==='collections');$('pillExp').classList.toggle('active',view==='expenses');$('entryFilter').innerHTML=view==='collections'?'<option value="all">All Entries</option><option>Cash</option><option>UPI</option><option>Bank Transfer</option>':'<option value="all">All Entries</option><option value="full">Fully Paid</option><option value="advance">Advance Paid</option>';renderEntryList()};window.renderEntryList=()=>{const f=$('entryFilter').value;const items=entryView==='collections'?data.collections.filter(x=>f==='all'||x.mode===f):data.expenses.filter(x=>f==='all'||x.status===f);$('entryListUnified').innerHTML=items.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(x=>entryView==='collections'?`<div class="item entry-row"><span class="entry-icon">🧑</span><span style="flex:1">${esc(x.name)}<br><small class="muted">${esc(x.mode)} • by @${esc(x.byUsername||x.by||'')}</small></span><span class="entry-amt-pos">+${fmt(x.amount)}</span></div>`:`<div class="item entry-row"><span class="entry-icon" style="background:var(--red-bg)">🧾</span><span style="flex:1">${esc(x.name)}<br><small class="muted">${x.status==='advance'?'Advance':'Fully Paid'} • by @${esc(x.byUsername||x.by||'')}</small></span><span class="entry-amt-neg">-${fmt(x.paid)}</span></div>`).join('')||'<small class="muted">No entries.</small>'};
+window.addFeedback=async()=>{const n=$('fName').value.trim(),d=$('fDesc').value.trim();if(!n||!d){alert('Enter name and feedback');return}await addDoc(collection(db,'feedback'),{name:n,category:$('fCategory').value,desc:d,date:new Date().toISOString(),by:currentUsername}) ;$('fName').value='';$('fDesc').value=''};
+window.saveCalNote=async()=>{const day=$('calDaySel').value,n=$('calNote').value.trim();if(!n)return;await setDoc(doc(db,'calendarNotes',String(day)),{note:n,by:currentUsername,date:new Date().toISOString()},{merge:true});$('calNote').value=''};
+function buildCalendar(){const grid=$('calGrid'),sel=$('calDaySel');grid.innerHTML='';sel.innerHTML='';['S','M','T','W','T','F','S'].forEach(d=>{const c=document.createElement('div');c.textContent=d;c.style.fontWeight='700';c.style.fontSize='11px';grid.appendChild(c)});const firstDow=new Date(2026,9,1).getDay();for(let i=0;i<firstDow;i++)grid.appendChild(document.createElement('div'));for(let day=1;day<=31;day++){const c=document.createElement('div');c.className='cal-day';c.textContent=day;if(day>=10&&day<=21){c.classList.add('fest');const o=document.createElement('option');o.value=day;o.textContent='Oct '+day;sel.appendChild(o)}grid.appendChild(c)}}
+function renderTeam(){const users=Object.entries(data.profiles);$('teamList').innerHTML=users.length?users.map(([uid,p])=>`<div class="item"><span>${avatarHtml(uid)} ${esc(p.name||uid)} <small class="muted">@${esc(p.username||uid)}</small></span><span class="role-pill">${uid===currentUserId?roleOf():'member'}</span></div>`).join(''):'<small class="muted">No members yet.</small>'}
+function render(){const tc=data.collections.reduce((s,x)=>s+Number(x.amount||0),0),spent=data.expenses.reduce((s,x)=>s+Number(x.paid||0),0),committed=data.expenses.reduce((s,x)=>s+Number(x.amount||0),0),pending=Math.max(committed-spent,0),balance=tc-spent,contributors=new Set(data.collections.map(x=>x.name)).size,avg=contributors?tc/contributors:0;$('fundsCollected').textContent=fmt(tc);$('fundsSpent').textContent=fmt(spent);$('trioBalance').textContent=fmt(balance);$('metricContributors').textContent=contributors;$('metricTransactions').textContent=data.collections.length+data.expenses.length;$('metricAverage').textContent=fmt(Math.round(avg));$('metricPending').textContent=fmt(pending);$('miniStats').textContent=`${data.collections.length} collection entries • ${data.expenses.length} expense entries • ${new Date().toLocaleString('en-IN')}`;$('collCount').textContent=data.collections.length;$('expCount').textContent=data.expenses.length;if(!$('entryFilter').options.length)setEntryView('collections');else renderEntryList();$('pendingPayments').innerHTML=data.expenses.filter(e=>Number(e.amount)>Number(e.paid)).map(e=>`<div class="item"><span>${esc(e.name)}</span><span class="amt" style="color:var(--red)">${fmt(e.amount-e.paid)}</span></div>`).join('')||'<small class="muted">Nothing pending.</small>';const by={};data.collections.forEach(c=>by[c.name]=(by[c.name]||0)+Number(c.amount||0));$('topContributors').innerHTML=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,a])=>`<div class="item"><span>${esc(n)}</span><span class="amt">${fmt(a)}</span></div>`).join('')||'<small class="muted">No collections yet.</small>';$('collectionList').innerHTML=data.collections.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(c=>`<div class="item"><span>${esc(c.name)} <small class="muted">(${esc(c.mode)})</small><br><small class="muted">by @${esc(c.byUsername||'')} • ${new Date(c.date).toLocaleString('en-IN')}</small></span><span><b>${fmt(c.amount)}</b><br><button class="secondary" onclick="editCollection('${c.id}')">✏️</button><button class="secondary" onclick="deleteCollection('${c.id}')">🗑️</button></span></div>`).join('')||'<small class="muted">No entries yet.</small>';$('expenseList').innerHTML=data.expenses.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`<div class="item"><span>${esc(e.name)}<br><small class="muted">${esc(e.desc||'')} • by @${esc(e.byUsername||'')}</small><br><small style="color:${Number(e.amount-e.paid)>0?'var(--red)':'var(--green)'}">Paid ${fmt(e.paid)} / ${fmt(e.amount)}${Number(e.amount-e.paid)>0?' • Balance '+fmt(e.amount-e.paid):' • Fully settled'}</small></span><span><b>${fmt(e.amount)}</b><br><button class="secondary" onclick="editExpense('${e.id}')">✏️</button><button class="secondary" onclick="deleteExpense('${e.id}')">🗑️</button></span></div>`).join('')||'<small class="muted">No entries yet.</small>';$('feedbackList').innerHTML=data.feedback.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(f=>`<div class="item"><span>${esc(f.name)} <small class="muted">(${esc(f.category)})</small><br><small>${esc(f.desc)}</small></span></div>`).join('')||'<small class="muted">No feedback yet.</small>';$('calNotesList').innerHTML=Object.entries(data.calNotes).map(([d,n])=>`<div class="item"><span>Oct ${d}</span><span>${esc(n)}</span></div>`).join('')||'<small class="muted">No day notes yet.</small>'}
+window.downloadReportPDF=()=>{const from=$('reportFrom').value,to=$('reportTo').value;const inRange=x=>{const d=new Date(x.date);return (!from||d>=new Date(from+'T00:00:00'))&&(!to||d<=new Date(to+'T23:59:59'))};const cs=data.collections.filter(inRange).sort((a,b)=>new Date(a.date)-new Date(b.date)),es=data.expenses.filter(inRange).sort((a,b)=>new Date(a.date)-new Date(b.date));const totalC=cs.reduce((s,x)=>s+Number(x.amount||0),0),totalE=es.reduce((s,x)=>s+Number(x.paid||0),0),balance=totalC-totalE;const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:'pt',format:'a4'});pdf.setFontSize(18);pdf.text('SPY - Sri Pentamamba Youth',40,45);pdf.setFontSize(11);pdf.text('Sharan Navaratri Celebration 2026 - Financial Report',40,63);pdf.text(`Generated: ${new Date().toLocaleString('en-IN')}`,40,80);if(from||to)pdf.text(`Period: ${from||'Beginning'} to ${to||'Today'}`,40,96);pdf.setFontSize(13);pdf.text('Financial Summary',40,125);pdf.autoTable({startY:135,head:[['Metric','Amount / Count']],body:[['Total Collections',fmt(totalC)],['Total Expenses Paid',fmt(totalE)],['Current Balance',fmt(balance)],['Collection Transactions',String(cs.length)],['Expense Transactions',String(es.length)],['Unique Contributors',String(new Set(cs.map(x=>x.name)).size)]]});let y=pdf.lastAutoTable.finalY+25;pdf.setFontSize(13);pdf.text('All Collections',40,y);pdf.autoTable({startY:y+8,head:[['Date','Contributor','Contact','Mode','Amount','Added By']],body:cs.map(x=>[new Date(x.date).toLocaleString('en-IN'),x.name,x.contact||'',x.mode,fmt(x.amount),x.byUsername||'']) ,styles:{fontSize:7}});y=pdf.lastAutoTable.finalY+25;if(y>720){pdf.addPage();y=45}pdf.setFontSize(13);pdf.text('All Expenses',40,y);pdf.autoTable({startY:y+8,head:[['Date','Expense','Description','Status','Agreed','Paid','Balance','Added By']],body:es.map(x=>[new Date(x.date).toLocaleString('en-IN'),x.name,x.desc||'',x.status==='advance'?'Advance':'Fully Paid',fmt(x.amount),fmt(x.paid),fmt(Number(x.amount)-Number(x.paid)),x.byUsername||'']),styles:{fontSize:6}});y=pdf.lastAutoTable.finalY+25;if(y>720){pdf.addPage();y=45}pdf.setFontSize(13);pdf.text('Committee / Entry Summary',40,y);const members={};[...cs,...es].forEach(x=>{const u=x.byUsername||x.by||'unknown';members[u]=(members[u]||{c:0,e:0});if(x.amount&&x.name&&cs.includes(x))members[u].c+=Number(x.amount||0);else members[u].e+=Number(x.paid||0)});pdf.autoTable({startY:y+8,head:[['Username','Collections Added','Expenses Added']],body:Object.entries(members).map(([u,v])=>[u,fmt(v.c),fmt(v.e)]),styles:{fontSize:8}});pdf.save(`SPY_Navaratri_Financial_Report_${new Date().toISOString().slice(0,10)}.pdf`)};
+onAuthStateChanged(auth,async user=>{if(user){currentUserId=user.uid;const saved=sessionStorage.getItem('spyUsername');if(saved){currentUsername=saved;const p=await getDoc(doc(db,'users',currentUserId));if(p.exists()){data.profiles[currentUserId]=p.data();enterApp()}else{sessionStorage.removeItem('spyUsername');$('loginScreen').style.display='block'}}startSync()}else{await signInAnonymously(auth)}});
+</script></body></html>
